@@ -1,5 +1,13 @@
 # RTH Watch – Änderungsprotokoll
 
+## 2.1.0 – 27.09.2026
+
+- Kompakte Statistikleiste und platzsparende mobile Dashboard-Darstellung.
+- Einzeltracking über ADS-B Exchange und Airplanes.live aus vorhandenen ICAO-Codes; Tabellenzeilen öffnen keine externe Seite mehr.
+- Gemeinsames Tracking aller Browserfavoriten mit gültigen, eindeutigen ICAO-Codes, unabhängig von Suche und Filtern.
+- Zentrale Prüfung der ICAO-Codes und Tracking-URLs; beide Anbieter öffnen in neuen Tabs.
+- Frontend- und Sicherheitstests für Multi-Provider- und Sammeltracking ergänzt.
+
 ## 2.0.0 – 27.09.2026
 
 **GitHub Pages Edition und Umbenennung von RotorWatch in RTH Watch.**

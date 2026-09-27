@@ -1,3 +1,5 @@
+import { favoriteIcaos, safeTrackingUrl, trackingUrl } from './tracking.js';
+
 const FAVORITES_KEY = 'rth-watch:favorites:v2';
 const LEGACY_FAVORITES_KEY = 'rotorwatch:favorites:v1';
 const $ = id => document.getElementById(id);
@@ -28,12 +30,13 @@ function el(tag, className, content) {
   return item;
 }
 function safeUrl(value, source) {
+  if (source === 'tracking') return safeTrackingUrl(value);
   try {
     const url = new URL(value);
     if (url.protocol !== 'https:') return null;
     if (source === 'rth') return ['www.rth.info', 'rth.info'].includes(url.hostname) &&
       url.pathname === '/stationen.db/station.php' && /^\d+$/.test(url.searchParams.get('id') || '') ? url.href : null;
-    return url.hostname === 'globe.adsbexchange.com' && /^\?icao=[0-9a-f]{6}$/i.test(url.search) ? url.href : null;
+    return null;
   } catch { return null; }
 }
 function external(label, href, className) {
@@ -58,7 +61,7 @@ function formatUpdated(iso) {
   const parsed = new Date(iso);
   if (Number.isNaN(parsed.getTime())) return 'Unbekannt';
   return new Intl.DateTimeFormat('de-DE', {
-    timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+    timeZone: 'Europe/Berlin', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
   }).format(parsed).replace(',', ' ·');
 }
 function sortStations(input) { return [...input].sort((a, b) => collator.compare(a.callsign, b.callsign)); }
@@ -88,14 +91,15 @@ function populateFilters() {
 }
 function renderMetrics() {
   $('metric-total').textContent = status.total ?? stations.length;
-  $('metric-mapped').textContent = status.mapped ?? stations.filter(s => s.adsbUrl).length;
+  $('metric-mapped').textContent = status.mapped ?? stations.filter(s => trackingUrl('adsb', [s.icao])).length;
   $('metric-favorites').textContent = stations.filter(s => favorites.has(s.id)).length;
   const updated = status.lastStationsSync;
   const target = $('metric-updated');
   target.textContent = updated ? new Intl.DateTimeFormat('de-DE', {
     timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit'
   }).format(new Date(updated)) + ' Uhr' : '—';
-  $('metric-update-detail').textContent = updated ? formatUpdated(updated) : 'Warte auf Erstimport';
+  target.title = updated ? `Letzter erfolgreicher Abgleich: ${formatUpdated(updated)} Uhr` : 'Warte auf Erstimport';
+  target.setAttribute('aria-label', target.title);
   let message = '';
   if (!stations.length) message = status.currentlyUpdating ?
     'Erstimport läuft. Der Stationsabgleich kann einige Minuten benötigen. Die Ansicht wird automatisch aktualisiert.' :
@@ -119,6 +123,20 @@ function starButton(station) {
 function renderFavorites() {
   const grid = $('favorites-grid');
   grid.replaceChildren();
+  const allIcaos = favoriteIcaos(sortStations(stations), favorites);
+  const bulk = $('favorites-bulk');
+  bulk.replaceChildren();
+  for (const [provider, label] of [['adsb', 'ADS-B Exchange'], ['airplanes', 'Airplanes.live']]) {
+    const url = safeUrl(trackingUrl(provider, allIcaos), 'tracking');
+    if (url) bulk.append(external(`Alle bei ${label} (${allIcaos.length}) ↗`, url, 'bulk-action'));
+    else {
+      const button = el('button', 'bulk-action', `Alle bei ${label}`);
+      button.type = 'button';
+      button.disabled = true;
+      button.title = 'Keine Favoriten mit gültiger ICAO-Adresse';
+      bulk.append(button);
+    }
+  }
   const visible = matchFilters(sortStations(stations.filter(s => favorites.has(s.id))));
   if (!visible.length) {
     const box = el('div', 'empty-favorites');
@@ -137,10 +155,13 @@ function renderFavorites() {
     info.append(el('div', 'fav-card-location', `${item.location || 'Ort unbekannt'}${item.helicopterType ? ' · ' + item.helicopterType : ''}`));
     top.append(info, starButton(item));
     const actions = el('div', 'fav-card-actions');
-    const adsb = safeUrl(item.adsbUrl, 'adsb');
     const rth = safeUrl(item.rthUrl, 'rth');
-    if (adsb) actions.append(external('ADS-B ÖFFNEN ↗', adsb, 'fav-action primary'));
-    else actions.append(el('span', 'fav-action disabled', 'KEIN HEXCODE'));
+    let hasTracking = false;
+    for (const [provider, label] of [['adsb', 'ADS-B Exchange'], ['airplanes', 'Airplanes.live']]) {
+      const url = safeUrl(trackingUrl(provider, [item.icao]), 'tracking');
+      if (url) { actions.append(external(`${label} ↗`, url, 'fav-action primary')); hasTracking = true; }
+    }
+    if (!hasTracking) actions.append(el('span', 'fav-action disabled', 'KEIN ICAO'));
     if (rth) actions.append(external('RTH.INFO ↗', rth, 'fav-action'));
     card.append(top, actions);
     grid.append(card);
@@ -169,18 +190,7 @@ function renderTable() {
   const fragment = document.createDocumentFragment();
   for (const item of visible) {
     const row = el('tr');
-    const adsb = safeUrl(item.adsbUrl, 'adsb');
     const rth = safeUrl(item.rthUrl, 'rth');
-    if (adsb) {
-      row.classList.add('clickable');
-      row.title = `${item.callsign} bei ADS-B Exchange öffnen`;
-      row.tabIndex = 0;
-      row.addEventListener('click', () => window.open(adsb, '_blank', 'noopener,noreferrer'));
-      row.addEventListener('keydown', event => {
-        if (event.target !== row) return;
-        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.open(adsb, '_blank', 'noopener,noreferrer'); }
-      });
-    }
     row.append(cell('', '', starButton(item)));
     row.append(cell('RUFNAME', 'table-callsign', item.callsign));
     row.append(cell('MASCHINE', `reg-code${item.registration ? '' : ' empty'}`, item.registration || 'Nicht gemeldet'));
@@ -199,11 +209,13 @@ function renderTable() {
     seen.title = manuallyAssigned ? 'Manuelle Stationszuordnung über config/station-overrides.json' : (age === null ? 'Keine Sichtung gemeldet' : `Zuletzt auf rth.info gemeldet vor ca. ${age} Tagen`);
     row.append(seen);
     row.append(cell('RTH.INFO', '', rth ? external('Quelle ↗', rth, 'source-link') : '—'));
-    if (adsb) {
-      const link = external('', adsb, 'track-link');
-      link.append(el('span', 'track-dot'), document.createTextNode('TRACKEN ↗'));
-      row.append(cell('TRACKING', '', link));
-    } else {
+    const tracking = el('div', 'tracking-actions');
+    for (const [provider, label] of [['adsb', 'ADS-B Exchange'], ['airplanes', 'Airplanes.live']]) {
+      const url = safeUrl(trackingUrl(provider, [item.icao]), 'tracking');
+      if (url) tracking.append(external(`${label} ↗`, url, 'track-link'));
+    }
+    if (tracking.childElementCount) row.append(cell('TRACKING', '', tracking));
+    else {
       const unavailable = el('span', 'track-link disabled');
       unavailable.append(el('span', 'disabled-dot'), document.createTextNode('KEIN ICAO'));
       row.append(cell('TRACKING', '', unavailable));
@@ -245,7 +257,7 @@ document.addEventListener('keydown', event => {
     event.preventDefault(); $('search').focus();
   }
 });
-window.addEventListener('storage', event => { if (event.key === FAVORITES_KEY) { favorites = readFavorites(); render(); } });
+window.addEventListener('storage', event => { if (event.key === FAVORITES_KEY || event.key === LEGACY_FAVORITES_KEY || event.key === null) { favorites = readFavorites(); render(); } });
 updateClock();
 setInterval(updateClock, 30000);
 setInterval(() => void loadStations(), 60000);

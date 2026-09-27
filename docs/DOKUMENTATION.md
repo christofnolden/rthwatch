@@ -1,4 +1,4 @@
-# RTH Watch v2.0.0 – Technische Dokumentation
+# RTH Watch v2.1.0 – Technische Dokumentation
 
 **Zielplattform:** GitHub Pages + GitHub Actions  
 **Bereitstellung:** Statisches Dashboard über GitHub Pages; Datenimport über GitHub Actions  
@@ -140,9 +140,9 @@ Die Datenbank bietet ein Mapping von normalisierten Luftfahrzeugkennzeichen (`DH
 - Wenn der letzte erfolgreiche ICAO-Abruf **mehr als 36 Stunden** zurückliegt, versucht ein Stationslauf erneut den Download.
 - Bei Ausfall werden die zuvor gespeicherten Zuordnungen beibehalten. Fehlende und nicht überschreibbare Kennungen erhalten **keinen** ADS-B-Link.
 
-### 3.3 ADS-B Exchange – Direktlink, keine Importquelle
+### 3.3 ADS-B Exchange und Airplanes.live – Direktlinks, keine Importquellen
 
-Ziel: `https://globe.adsbexchange.com/?icao=<HEXCODE>`. Dieser Link wird **lokal erzeugt** und nur beim Anklicken geöffnet. RTH Watch nutzt hierfür **keine kostenpflichtige ADS-B-Exchange-API**. Ein HTTP-403-Fehler innerhalb der externen ADS-B-Exchange-Seite ist nicht automatisch ein Hinweis auf ein fehlerhaftes ICAO-Mapping.
+Ziele: `https://globe.adsbexchange.com/?icao=<HEXCODE>` und `https://globe.airplanes.live/?icao=<HEXCODE>`. Beide Links werden im Browser aus dem vorhandenen `icao`-Feld erzeugt und nur beim Anklicken geöffnet. Es erfolgt kein zusätzlicher Datenimport und keine Tracking-API-Abfrage. RTH Watch nutzt hierfür **keine kostenpflichtige ADS-B-Exchange-API**. Ein HTTP-403-Fehler innerhalb der externen ADS-B-Exchange-Seite ist nicht automatisch ein Hinweis auf ein fehlerhaftes ICAO-Mapping.
 
 ## 4. Datenimport und Fehlerbehandlung
 
@@ -199,11 +199,13 @@ Die Jobs sind pro Workflow über GitHub-Actions-`concurrency` serialisiert (`can
 
 Die Oberfläche besteht aus `public/index.html`, `public/assets/style.css` und `public/assets/app.js` und wird **ohne Framework und ohne eigenen Node-Webserver** bereitgestellt. Statische Dateipfade sind relativ (`./assets/...`, `./data/stations.json`): Die Seite funktioniert dadurch als `username.github.io/repo/` ebenso wie mit eigener Domain.
 
-Die Tabelle zeigt **Rufname, Maschine, Ort, Betreiber, Typ, letzte Sichtung, RTH.INFO-Quelllink und ADS-B-Tracking**. Klick auf die Stationszeile bzw. den Tracking-Link öffnet die zugeordnete Maschine bei ADS-B Exchange in einem neuen Tab. Suche und Filter arbeiten lokal auf dem geladenen JSON.
+Die Tabelle zeigt **Rufname, Maschine, Ort, Betreiber, Typ, letzte Sichtung, RTH.INFO-Quelllink und Tracking-Aktionen für ADS-B Exchange und Airplanes.live**. Ausschließlich die gewählte Tracking-Aktion öffnet die zugeordnete Maschine in einem neuen Tab; die Tabellenzeile selbst hat keine Weiterleitung. Suche und Filter arbeiten lokal auf dem geladenen JSON.
 
-Favoriten werden als numerische Stations-IDs in `localStorage` unter **`rth-watch:favorites:v2`** gespeichert; bei unverändertem Browser-/Domainkontext liest v2 als Migrationshilfe auch den alten Schlüssel `rotorwatch:favorites:v1`. Browserprofile und Endgeräte sind unabhängig. Der Server erhält diese persönlichen Markierungen nicht; bei einem Domainwechsel lassen sich bestehende Favoriten nicht automatisch übernehmen.
+Favoriten werden als numerische Stations-IDs in `localStorage` unter **`rth-watch:favorites:v2`** gespeichert; bei unverändertem Browser-/Domainkontext liest v2 als Migrationshilfe auch den alten Schlüssel `rotorwatch:favorites:v1`. Favoritenkarten bieten beide Tracking-Anbieter und den RTH-Info-Link. Zwei Aktionen oberhalb der Karten öffnen alle gespeicherten Favoriten mit gültigem ICAO-Code gemeinsam beim jeweiligen Anbieter. Fehlende oder ungültige Codes werden ausgelassen, doppelte Codes entfernt. Die Auswahl ist unabhängig von Suche und Filtern und aktualisiert sich bei Favoriten- und Datenänderungen sowie über den Browser-Storage-Event. Browserprofile und Endgeräte sind unabhängig. Der Server erhält diese persönlichen Markierungen nicht; bei einem Domainwechsel lassen sich bestehende Favoriten nicht automatisch übernehmen.
 
 **Darstellung manueller Änderungen:** Der Feldwert `assignmentSource: "manual"` sorgt für den sichtbaren Hinweis **MANUELL** statt eines irreführenden rth.info-Sichtungsdatums.
+
+**Link-Sicherheit:** Für Tracking gelten ausschließlich HTTPS, die Domains `globe.adsbexchange.com` und `globe.airplanes.live` sowie sechsstellige hexadezimale ICAO-Codes. Tracking-Links werden zentral generiert und geprüft; RTH-Info-Links behalten ihre bestehende Validierung.
 
 **Aktualisierungsverhalten:** Der geöffnete Browser prüft die statische JSON-Datei jede Minute erneut (mit Cache-Busting-Parameter); die tatsächliche Datenerzeugung richtet sich nach dem Actions-Zeitplan. Ein GitHub-Pages-CDN kann neue Veröffentlichungen leicht verzögert ausliefern.
 
@@ -305,7 +307,7 @@ Das Backup `rth-watch-state` kann unter **Actions → erfolgreicher Build → Ar
 | `src/config.js` | Importkonfiguration und Pfade |
 | `scripts/restore-state.mjs` | GitHub-Actions-/Pages-Daten wiederherstellen |
 | `scripts/generate.mjs` | Imports orchestrieren, statischen Build ausgeben |
-| `public/` | Statische Dashboard-Oberfläche (aus v1 übernommen und für Pages angepasst) |
+| `public/` | Statische Dashboard-Oberfläche einschließlich `assets/tracking.js` für testbare Tracking-Links |
 | `config/` | Versionierte manuelle Zuordnungen |
 | `test/` | Regressionstests für Parser, Mapping, Status und Seitenpfade |
 
@@ -316,5 +318,6 @@ Offizielle technische Referenzen:
 - rth.info-Stationsdatenbank: `https://www.rth.info/stationen.db/stationen.php`
 - tar1090-Datenbank: `https://github.com/wiedehopf/tar1090-db`
 - ADS-B Exchange: `https://globe.adsbexchange.com/`
+- Airplanes.live: `https://globe.airplanes.live/`
 
 **Stand dieser Dokumentation:** 27.09.2026. Externe Dienstbedingungen, Workflow-Limits und Produktfunktionen können sich ändern.

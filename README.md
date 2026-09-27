@@ -1,8 +1,8 @@
 # RTH Watch 🚁
 
-**Version 2.0.0 · GitHub Pages Edition**
+**Version 2.1.0 · GitHub Pages Edition**
 
-RTH Watch ist ein unabhängiges, responsives Web-Dashboard für Rettungs- und Intensivtransporthubschrauber. Es führt öffentlich gemeldete Stationsinformationen zusammen, ordnet den zuletzt gemeldeten Luftfahrzeugkennzeichen ICAO-Adressen zu und erzeugt Direktlinks zu ADS-B Exchange. Der Schwerpunkt liegt auf deutschen Luftrettungsstationen sowie ausgewählten benachbarten Stationen.
+RTH Watch ist ein unabhängiges, responsives Web-Dashboard für Rettungs- und Intensivtransporthubschrauber. Es führt öffentlich gemeldete Stationsinformationen zusammen, ordnet den zuletzt gemeldeten Luftfahrzeugkennzeichen ICAO-Adressen zu und erzeugt Direktlinks zu ADS-B Exchange und Airplanes.live. Der Schwerpunkt liegt auf deutschen Luftrettungsstationen sowie ausgewählten benachbarten Stationen.
 
 > **Datenhinweis:** Die angezeigten Luftfahrzeuge entsprechen den zuletzt bei rth.info gemeldeten Sichtungen. RTH Watch ermittelt weder aktuelle Besatzungen noch eine verlässliche Echtzeit-Zuordnung von Maschinen zu Stationen. Auch ein gültiger Tracking-Link bestätigt keinen aktuellen Flug.
 
@@ -10,8 +10,8 @@ RTH Watch ist ein unabhängiges, responsives Web-Dashboard für Rettungs- und In
 
 - **Stationsverzeichnis:** Rufname, Luftfahrzeugkennzeichen, Ort, Betreiber, Standard-Hubschraubertyp, letzte Sichtung und Original-Stationslink.
 - **Stationsauswahl:** RTH-, Dual-Use- und ITH-Kategorien sowie ergänzende Rufnamen mit den Präfixen `Christoph `, `Lifeliner` und `Air Rescue`; `Christophorus` ist ausgeschlossen.
-- **Tracking-Links:** Automatische Zuordnung Registrierung → ICAO-Hexcode und Verlinkung zu ADS-B Exchange.
-- **Browserfavoriten:** Stationsbezogene Favoriten in einem eigenen Bereich, ausschließlich lokal im jeweiligen Browser gespeichert.
+- **Tracking-Links:** Automatische Zuordnung Registrierung → ICAO-Hexcode und Verlinkung zu ADS-B Exchange und Airplanes.live.
+- **Browserfavoriten:** Stationsbezogene Favoriten in einem eigenen Bereich, ausschließlich lokal im jeweiligen Browser gespeichert. Beide Anbieter können alle Favoriten mit gültiger ICAO-Adresse gemeinsam auf einer Karte anzeigen; doppelte ICAO-Adressen werden nur einmal übernommen. Suche und Filter beeinflussen das Sammeltracking nicht.
 - **Übersichtliche Oberfläche:** Responsives Dark-Mode-Design mit Suche und Filtern.
 - **Automatische Aktualisierung:** GitHub Actions importiert Stations- und ICAO-Daten; GitHub Pages veröffentlicht das statische Dashboard.
 - **Ausfallsicherheit:** Wiederherstellung aus vorherigen Datensnapshots, Plausibilitätsprüfungen und manuelle Korrekturen für Registrierungen und ICAO-Adressen.
@@ -23,6 +23,7 @@ RTH Watch ist ein unabhängiges, responsives Web-Dashboard für Rettungs- und In
 | [rth.info – Stationsdatenbank](https://www.rth.info/stationen.db/stationen.php) | Stations-IDs, Rufnamen, Standorte, Betreiber, Hubschraubertypen, zuletzt gemeldete Registrierungen | 10:07, 14:07 und 18:07 Uhr |
 | [wiedehopf/tar1090-db](https://github.com/wiedehopf/tar1090-db) | Zuordnung von Registrierungen zu ICAO-Hexcodes | 09:33 Uhr; bei neuen unbekannten Kennzeichen ggf. zusätzlich |
 | [ADS-B Exchange](https://globe.adsbexchange.com/) | Externe Zielseite für ICAO-Direktlinks | Kein automatischer Abruf durch RTH Watch |
+| [Airplanes.live](https://globe.airplanes.live/) | Zweite externe Zielseite für dieselben ICAO-Codes | Kein automatischer Abruf durch RTH Watch |
 
 Die Zeitangaben bezeichnen geplante Ausführungszeiten. GitHub Actions kann zeitgesteuerte Workflows verzögert oder bei hoher Auslastung gar nicht starten.
 
@@ -41,7 +42,7 @@ Konfiguration/Overrides ──────┤
                                               │
                               Suche, Filter, Browserfavoriten
                                               │
-                              Externe RTH-/ADS-B-Links
+                              Externe RTH-/Tracking-Links
 ```
 
 Das veröffentlichte Dashboard benötigt weder einen laufenden Node.js-Dienst noch eine Datenbank oder eigene Backend-API. Automatisch generierte Daten werden als GitHub-Actions- und Pages-Artefakte verwaltet und **nicht** in den Quellcode-Branch committed.
@@ -101,4 +102,4 @@ Die Verzeichnisse `dist/`, `.state/`, `data/` und `public/data/` sowie SQLite-Da
 
 **Projektstatus:** Die Parser- und vollständigen Integrationsläufe mit sämtlichen realen Stationen sind beim ersten produktiven GitHub-Actions-Import zu verifizieren. Ein erfolgreicher Konnektivitätstest allein ersetzt diesen Integrationstest nicht.
 
-**Hinweis:** RTH Watch steht in keiner offiziellen Verbindung zu rth.info, ADS-B Exchange oder dem tar1090-db-Projekt. Externe Daten und Links bleiben von deren Verfügbarkeit und Nutzungsbedingungen abhängig.
+**Hinweis:** RTH Watch steht in keiner offiziellen Verbindung zu rth.info, ADS-B Exchange, Airplanes.live oder dem tar1090-db-Projekt. Externe Daten und Links bleiben von deren Verfügbarkeit und Nutzungsbedingungen abhängig.
