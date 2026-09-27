@@ -1,0 +1,140 @@
+name: RTH Watch - update data and publish Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/pages.yml'
+      - 'config/**'
+      - 'public/**'
+      - 'scripts/**'
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+  schedule:
+    # IANA timezone: summer/winter time is handled by GitHub Actions.
+    - cron: '33 9 * * *'
+      timezone: Europe/Berlin
+    - cron: '7 10,14,18 * * *'
+      timezone: Europe/Berlin
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'full = force both imports; stations = RTH; aircraft = ICAO; publish = config/design only'
+        required: true
+        default: full
+        type: choice
+        options:
+          - full
+          - stations
+          - aircraft
+          - publish
+
+# Serialize scheduled runs, source pushes and manual deployments.
+concurrency:
+  group: rth-watch-pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Import, test and build static website
+    runs-on: ubuntu-latest
+    timeout-minutes: 170
+    permissions:
+      contents: read
+      actions: read # Allows recovery from previous same-repo Actions backup artifacts.
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        # Use a committed lockfile for reproducible installs;
+        # fall back to npm install for the first deployment only.
+        shell: bash
+        run: |
+          if [[ -f package-lock.json ]]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+            echo "::warning::Commit package-lock.json for reproducible builds."
+          fi
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Configure Pages and determine current site URL
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - name: Restore previous generated data
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PAGES_BASE_URL: ${{ steps.pages.outputs.base_url }}
+        run: node scripts/restore-state.mjs
+
+      - name: Select import mode
+        id: task
+        env:
+          EVENT: ${{ github.event_name }}
+          SCHEDULE: ${{ github.event.schedule }}
+          REQUESTED: ${{ inputs.mode }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ "$EVENT" == 'workflow_dispatch' ]]; then
+            mode="$REQUESTED"
+          elif [[ "$EVENT" == 'schedule' && "$SCHEDULE" == '33 9 * * *' ]]; then
+            mode='aircraft'
+          elif [[ "$EVENT" == 'schedule' ]]; then
+            mode='stations'
+          else
+            mode='publish'
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "Selected mode: $mode"
+
+      - name: Generate static website
+        env:
+          FETCH_TIMEOUT_MS: '45000'
+          RTH_REQUEST_DELAY_MS: '1200'
+          RTH_MIN_STATIONS: '15'
+        run: node scripts/generate.mjs --mode=${{ steps.task.outputs.mode }}
+
+      - name: Back up generated data outside the source branch
+        uses: actions/upload-artifact@v4
+        with:
+          name: rth-watch-state
+          path: dist/data/stations.json
+          retention-days: 90
+          if-no-files-found: error
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy website
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

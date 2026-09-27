@@ -1,0 +1,19 @@
+{
+  "name": "rth-watch",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Static rescue helicopter station dashboard powered by GitHub Pages and GitHub Actions",
+  "engines": { "node": ">=24.0.0" },
+  "scripts": {
+    "build": "node scripts/generate.mjs --mode=publish",
+    "sync:all": "node scripts/generate.mjs --mode=full",
+    "sync:stations": "node scripts/generate.mjs --mode=stations",
+    "sync:aircraft": "node scripts/generate.mjs --mode=aircraft",
+    "test": "node --test test/*.test.js",
+    "check": "npm test"
+  },
+  "dependencies": {
+    "cheerio": "1.1.2"
+  }
+}

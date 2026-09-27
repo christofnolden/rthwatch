@@ -1,0 +1,34 @@
+# RTH Watch v2 – only SOURCE CODE, CONFIG and TEST FIXTURES belong in Git.
+# Runtime data are NEVER committed to the source repository.
+/node_modules/
+/dist/
+/.state/
+/.cache/
+/.tmp/
+/coverage/
+/.nyc_output/
+/data/
+/public/data/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+regicao-cache.bin
+*.log
+*.pid
+*.lock
+*.tmp
+.env
+.env.*
+!.env.example
+.DS_Store
+__MACOSX/
+._*
+.vscode/
+.idea/
+# For reproducible npm installs, package-lock.json MAY and SHOULD be tracked.
+# config/*.json override files are intentional, versioned INPUTS, not runtime data.
+
+# Operator-specific deployment notes are maintained separately.
+/docs/INSTALLATION.md
+/RTH-Watch-v2.0.0-Private-Installation.md

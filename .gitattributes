@@ -1,0 +1,9 @@
+* text=auto
+*.svg text
+*.html text
+*.css text
+*.js text
+*.mjs text
+*.json text
+*.md text
+*.yml text
