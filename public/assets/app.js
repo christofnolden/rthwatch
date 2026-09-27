@@ -197,9 +197,7 @@ function renderTable() {
     const loc = el('span', 'cell-ellipsis', item.location || '—'); loc.title = [item.location, item.base].filter(Boolean).join(' · ');
     row.append(cell('ORT', 'location-cell', loc));
     const op = el('span', 'cell-ellipsis', item.operator || '—'); op.title = item.operator || '';
-    row.append(cell('BETREIBER', 'operator-cell', op));
     const type = el('span', 'cell-ellipsis', item.helicopterType || '—'); type.title = item.helicopterType || '';
-    row.append(cell('TYP', '', type));
     const age = sightingAge(item.sightingDate);
     const manuallyAssigned = item.assignmentSource === 'manual';
     const seen = cell('SICHTUNG', 'last-seen', manuallyAssigned ? 'MANUELL' : formatDate(item.sightingDate));
@@ -207,8 +205,6 @@ function renderTable() {
     if (age !== null && age > 30) seen.classList.add('very-old');
     else if (age !== null && age > 14) seen.classList.add('old');
     seen.title = manuallyAssigned ? 'Manuelle Stationszuordnung über config/station-overrides.json' : (age === null ? 'Keine Sichtung gemeldet' : `Zuletzt auf rth.info gemeldet vor ca. ${age} Tagen`);
-    row.append(seen);
-    row.append(cell('RTH.INFO', '', rth ? external('Quelle ↗', rth, 'source-link') : '—'));
     const tracking = el('div', 'tracking-actions');
     for (const [provider, label] of [['adsb', 'ADS-B Exchange'], ['airplanes', 'Airplanes.live']]) {
       const url = safeUrl(trackingUrl(provider, [item.icao]), 'tracking');
@@ -220,6 +216,10 @@ function renderTable() {
       unavailable.append(el('span', 'disabled-dot'), document.createTextNode('KEIN ICAO'));
       row.append(cell('TRACKING', '', unavailable));
     }
+    row.append(cell('RTH.INFO', '', rth ? external('Quelle ↗', rth, 'source-link') : '—'));
+    row.append(seen);
+    row.append(cell('BETREIBER', 'operator-cell', op));
+    row.append(cell('TYP', '', type));
     fragment.append(row);
   }
   body.append(fragment);
