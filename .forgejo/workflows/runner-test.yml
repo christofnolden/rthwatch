@@ -1,0 +1,78 @@
+name: Forgejo Runner Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  runner-test:
+    name: Validate RTH Watch Runner
+    runs-on: rthwatch-node24
+    timeout-minutes: 15
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check runtime environment
+        run: |
+          set -euo pipefail
+          cat /etc/os-release
+          node --version
+          npm --version
+          git --version
+          curl --version
+          test "$(node -p 'process.versions.node.split(".")[0]')" = 24
+
+      - name: Check Docker socket isolation
+        run: |
+          set -euo pipefail
+          for socket in /var/run/docker.sock /run/docker.sock /runner-socket/docker.sock; do
+            if [ -e "$socket" ] || [ -S "$socket" ]; then
+              echo "Unexpected Docker socket: $socket" >&2
+              exit 1
+            fi
+          done
+          echo "No Docker socket found at the expected paths."
+
+      - name: Check Forgejo connectivity
+        run: |
+          set -euo pipefail
+          : "${FORGEJO_SERVER_URL:?Forgejo server URL is missing}"
+          host=$(node -p 'new URL(process.env.FORGEJO_SERVER_URL).hostname')
+          getent hosts "$host"
+          curl --fail --silent --show-error --location \
+            --connect-timeout 15 --max-time 30 \
+            "${FORGEJO_SERVER_URL%/}/api/v1/version"
+          echo
+
+      - name: Checkout source code
+        uses: https://data.forgejo.org/actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Run RTH Watch tests
+        run: npm test
+
+      - name: Check RTH-Info connectivity
+        run: |
+          curl --fail --silent --show-error --location \
+            --retry 1 --retry-delay 2 --retry-all-errors \
+            --connect-timeout 15 --max-time 45 \
+            --output /dev/null \
+            --write-out 'HTTP: %{http_code}\nTime: %{time_total}s\n' \
+            https://www.rth.info/stationen.db/stationen.php
+
+      - name: Check ICAO database connectivity
+        run: |
+          curl --fail --silent --show-error --location \
+            --retry 1 --retry-delay 2 --retry-all-errors \
+            --connect-timeout 15 --max-time 45 \
+            --output /dev/null \
+            --write-out 'HTTP: %{http_code}\nTime: %{time_total}s\n' \
+            https://raw.githubusercontent.com/wiedehopf/tar1090-db/master/db/regIcao.js
+
+      - name: Runner validation completed
+        run: echo 'ALL RUNNER TESTS SUCCESSFUL'
