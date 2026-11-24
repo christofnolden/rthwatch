@@ -1,5 +1,14 @@
 # RTH Watch – Änderungsprotokoll
 
+## 2.2.0 – 24.11.2026
+
+- Datenimport, Tests und statischen Build von GitHub Actions auf Forgejo Actions verlagert; GitHub Pages bleibt Hosting-Ziel.
+- `main` als Quellbranch und `gh-pages` als isolierten Deployment- und Snapshot-Branch eingerichtet. Erstveröffentlichung erstellt automatisch einen Orphan Branch, spätere Veröffentlichungen erhalten dessen Historie.
+- Wiederherstellung aus validiertem `gh-pages`-Snapshot; bisherige öffentliche Website dient nur während der Erstinitialisierung als Fallback.
+- Ressourcenschonende Nachholkontrolle für fehlende oder unvollständige Importe mit persistentem Limit von zwei zusätzlichen Versuchen je Termin und mindestens 60 Minuten Abstand.
+- Deployment validiert den Build, prüft den aktuellen `main`-Stand und verweigert konkurrierende Updates; unveränderte Builds erzeugen keinen Commit.
+- Forgejo-spezifische Zeitpläne, manuellen `reconcile`-Modus, Dokumentation und lokale Git-Integrationstests ergänzt. Fachliche Parser-, Mapping-, Override-, Favoriten- und Trackinglogik beibehalten.
+
 ## 2.1.0 – 27.09.2026
 
 - Kompakte Statistikleiste und platzsparende mobile Dashboard-Darstellung.

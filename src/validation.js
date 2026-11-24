@@ -14,6 +14,22 @@ export function validateSnapshot(value, minStations = 3) {
       !isPlainObject(value.registrations) || !isPlainObject(value.status)) {
     throw new Error('Invalid RTH Watch v2 snapshot (version, stations, mappings or status)');
   }
+  if (value.status.lastStationsCompleteSync != null &&
+      (typeof value.status.lastStationsCompleteSync !== 'string' ||
+        !Number.isFinite(Date.parse(value.status.lastStationsCompleteSync)))) {
+    throw new Error('Invalid complete stations timestamp in snapshot');
+  }
+  if (value.status.reconcile !== undefined) {
+    if (!isPlainObject(value.status.reconcile)) throw new Error('Invalid reconcile state in snapshot');
+    for (const entry of Object.values(value.status.reconcile)) {
+      if (!isPlainObject(entry) || typeof entry.slot !== 'string' ||
+          !Number.isFinite(Date.parse(entry.slot)) || !Number.isInteger(entry.attempts) ||
+          entry.attempts < 0 || entry.attempts > 2 ||
+          typeof entry.lastAttempt !== 'string' || !Number.isFinite(Date.parse(entry.lastAttempt))) {
+        throw new Error('Invalid reconcile attempt in snapshot');
+      }
+    }
+  }
   const ids = new Set();
   for (const station of value.sourceStations) {
     if (!Number.isSafeInteger(station?.id) || station.id <= 0 || ids.has(station.id) ||

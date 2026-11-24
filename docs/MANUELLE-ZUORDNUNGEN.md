@@ -72,9 +72,9 @@ Eine manuelle Stationszuordnung erhält im Dashboard die Kennzeichnung **MANUELL
 ## 5. Änderungen veröffentlichen
 
 1. JSON-Datei im maßgeblichen Quellrepository ändern und committen.
-2. Die Änderung in den `main`-Branch des GitHub-Repositories übernehmen.
+2. Die Änderung in den Forgejo-Branch `main` übernehmen; die vorhandene Spiegelung überträgt sie nach GitHub.
 3. Der Workflow veröffentlicht bei relevanten `main`-Pushes in der Regel automatisch mit dem letzten gültigen Datensatz. Alternativ **Actions → RTH Watch - update data and publish Pages → Run workflow → `publish`** ausführen.
-4. Nach abgeschlossenem Pages-Deployment das Dashboard neu laden und Registrierung, Status **MANUELL** sowie Tracking-Link prüfen.
+4. Nach erfolgreichem Forgejo-Deployment, GitHub-Spiegelung und Pages-Veröffentlichung das Dashboard neu laden und Registrierung, Status **MANUELL** sowie Tracking-Link prüfen.
 
 Ein erneuter Abruf von rth.info ist für das Wirksamwerden vorhandener Stations-Overrides nicht erforderlich. Bei einem zuvor noch nie erfolgreich durchgeführten Erstimport ist dagegen zunächst ein vollständiger Datensatz notwendig.
 

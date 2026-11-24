@@ -8,7 +8,7 @@ test('public assets use repository-relative links (GitHub Project Pages)', () =>
   assert.match(html, /\.\/assets\/style\.css/);
   assert.match(html, /\.\/assets\/app\.js/);
   assert.doesNotMatch(html, /(?:href|src)="\/assets\//);
-  assert.match(html, /RTH Watch v2\.1\.0/);
+  assert.match(html, /RTH Watch v2\.2\.0/);
   assert.match(html, /id="favorites-bulk"/);
   assert.match(html, /Airplanes\.live/);
   assert.doesNotMatch(html, /AIR RESCUE INTELLIGENCE|class="eyebrow"|class="breadcrumb"/);

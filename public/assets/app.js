@@ -103,10 +103,10 @@ function renderMetrics() {
   let message = '';
   if (!stations.length) message = status.currentlyUpdating ?
     'Erstimport läuft. Der Stationsabgleich kann einige Minuten benötigen. Die Ansicht wird automatisch aktualisiert.' :
-    'Noch keine Stationsdaten veröffentlicht. Prüfe den letzten GitHub-Actions-Lauf.';
+    'Noch keine Stationsdaten veröffentlicht. Prüfe den letzten Forgejo-Actions-Lauf.';
   else if (status.lastStationsError) message = `Letzter Stationsabruf mit Hinweis: ${status.lastStationsError}`;
   else if (updated && Number.isFinite(Date.parse(updated)) && Date.now() - Date.parse(updated) > 30 * 60 * 60 * 1000)
-    message = 'Achtung: Der letzte erfolgreiche Stationsabgleich liegt mehr als 30 Stunden zurück. GitHub Actions prüfen.';
+    message = 'Achtung: Der letzte erfolgreiche Stationsabgleich liegt mehr als 30 Stunden zurück. Forgejo Actions prüfen.';
   else if (status.lastAircraftError) message = `Letzter ICAO-Datenabruf mit Hinweis: ${status.lastAircraftError}`;
   notice(message);
 }

@@ -21,5 +21,5 @@ export const config = Object.freeze({
   stateFile: path.resolve('./.state/stations.json'),
   distDir: path.resolve('./dist'),
   publicDir: path.resolve('./public'),
-  userAgent: 'RTHWatch/2.0 (scheduled informational dashboard; contact via repository issues)'
+  userAgent: 'RTHWatch/2.2 (scheduled informational dashboard; contact via repository issues)'
 });

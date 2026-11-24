@@ -28,3 +28,11 @@ test('versioned station/hex overrides normalize and reject invalid files', () =>
   assert.deepEqual(record, { registration: 'D-HXAD', icao: '3e0f5f' });
   assert.throws(() => parseStationOverrides({ 1: { registration: 'D-HXAD', unexpected: 'field' } }), /Unknown field/);
 });
+test('invalid persistent retry metadata is rejected', () => {
+  const snapshot = {
+    schemaVersion: 2,
+    sourceStations: [{ id: 1, callsign: 'Christoph 1', rthUrl: 'https://www.rth.info/stationen.db/station.php?id=1&show=1' }],
+    registrations: {}, status: { reconcile: { stations: { slot: '2026-11-24T09:00:00Z', attempts: '999', lastAttempt: '2026-11-24T10:00:00Z' } } }
+  };
+  assert.throws(() => validateSnapshot(snapshot, 1), /Invalid reconcile attempt/);
+});

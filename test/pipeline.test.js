@@ -130,3 +130,12 @@ test('no first publication with an unavailable source', async () => {
     fetchPage: async () => { throw new Error('website down'); } }), /website down/);
   await assert.rejects(updateSnapshot(null, { ...options, mode: 'publish' }), /Cannot publish/);
 });
+test('publish preserves generatedAt when snapshot content is unchanged', async () => {
+  const previous = await updateSnapshot(null, options);
+  const published = await updateSnapshot(previous, { ...options, mode: 'publish',
+    now: () => new Date('2026-09-28T11:00:00Z'),
+    fetchPage: async () => { throw new Error('publish must not fetch stations'); },
+    fetchAircraft: async () => { throw new Error('publish must not fetch aircraft'); } });
+  assert.equal(published.generatedAt, previous.generatedAt);
+  assert.equal(published.status.lastStationsCompleteSync, previous.status.lastStationsCompleteSync);
+});

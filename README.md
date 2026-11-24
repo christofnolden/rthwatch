@@ -1,105 +1,58 @@
 # RTH Watch 🚁
 
-**Version 2.1.0 · GitHub Pages Edition**
+**Version 2.2.0 · Statisches Dashboard**
 
-RTH Watch ist ein unabhängiges, responsives Web-Dashboard für Rettungs- und Intensivtransporthubschrauber. Es führt öffentlich gemeldete Stationsinformationen zusammen, ordnet den zuletzt gemeldeten Luftfahrzeugkennzeichen ICAO-Adressen zu und erzeugt Direktlinks zu ADS-B Exchange und Airplanes.live. Der Schwerpunkt liegt auf deutschen Luftrettungsstationen sowie ausgewählten benachbarten Stationen.
-
-> **Datenhinweis:** Die angezeigten Luftfahrzeuge entsprechen den zuletzt bei rth.info gemeldeten Sichtungen. RTH Watch ermittelt weder aktuelle Besatzungen noch eine verlässliche Echtzeit-Zuordnung von Maschinen zu Stationen. Auch ein gültiger Tracking-Link bestätigt keinen aktuellen Flug.
+RTH Watch ist ein unabhängiges, responsives Dashboard für Rettungs- und Intensivtransporthubschrauber. Es zeigt zuletzt bei [rth.info](https://www.rth.info/stationen.db/stationen.php) gemeldete Stationsdaten und verknüpft bekannte ICAO-Codes mit ADS-B Exchange und Airplanes.live. Die Angaben sind keine verlässliche Echtzeit-Zuordnung von Luftfahrzeugen zu Stationen und kein Live-Flugstatus.
 
 ## Funktionen
 
-- **Stationsverzeichnis:** Rufname, Luftfahrzeugkennzeichen, Ort, Betreiber, Standard-Hubschraubertyp, letzte Sichtung und Original-Stationslink.
-- **Stationsauswahl:** RTH-, Dual-Use- und ITH-Kategorien sowie ergänzende Rufnamen mit den Präfixen `Christoph `, `Lifeliner` und `Air Rescue`; `Christophorus` ist ausgeschlossen.
-- **Tracking-Links:** Automatische Zuordnung Registrierung → ICAO-Hexcode und Verlinkung zu ADS-B Exchange und Airplanes.live.
-- **Browserfavoriten:** Stationsbezogene Favoriten in einem eigenen Bereich, ausschließlich lokal im jeweiligen Browser gespeichert. Beide Anbieter können alle Favoriten mit gültiger ICAO-Adresse gemeinsam auf einer Karte anzeigen; doppelte ICAO-Adressen werden nur einmal übernommen. Suche und Filter beeinflussen das Sammeltracking nicht.
-- **Übersichtliche Oberfläche:** Responsives Dark-Mode-Design mit Suche und Filtern.
-- **Automatische Aktualisierung:** GitHub Actions importiert Stations- und ICAO-Daten; GitHub Pages veröffentlicht das statische Dashboard.
-- **Ausfallsicherheit:** Wiederherstellung aus vorherigen Datensnapshots, Plausibilitätsprüfungen und manuelle Korrekturen für Registrierungen und ICAO-Adressen.
+- Stationsverzeichnis mit Rufname, Kennzeichen, Ort, Betreiber, Typ, Sichtungsdatum und Quellenlink.
+- Suche und Filter nach Kategorie und Betreiber.
+- Einzeltracking und gemeinsames Tracking aller Browserfavoriten mit gültiger ICAO-Adresse.
+- Favoriten pro Browser unter dem unveränderten Schlüssel `rth-watch:favorites:v2`.
+- Versionierte Stations- und ICAO-Overrides sowie Prüfung externer Links.
+- Responsives Dashboard ohne dauerhaften Webserver oder Datenbank.
 
-## Datenquellen
+## Daten und Aktualisierung
 
-| Datenquelle | Verwendung | Geplante Aktualisierung (Europe/Berlin) |
+| Quelle | Verwendung | Regelmäßiger Termin (Europe/Berlin) |
 |---|---|---|
-| [rth.info – Stationsdatenbank](https://www.rth.info/stationen.db/stationen.php) | Stations-IDs, Rufnamen, Standorte, Betreiber, Hubschraubertypen, zuletzt gemeldete Registrierungen | 10:07, 14:07 und 18:07 Uhr |
-| [wiedehopf/tar1090-db](https://github.com/wiedehopf/tar1090-db) | Zuordnung von Registrierungen zu ICAO-Hexcodes | 09:33 Uhr; bei neuen unbekannten Kennzeichen ggf. zusätzlich |
-| [ADS-B Exchange](https://globe.adsbexchange.com/) | Externe Zielseite für ICAO-Direktlinks | Kein automatischer Abruf durch RTH Watch |
-| [Airplanes.live](https://globe.airplanes.live/) | Zweite externe Zielseite für dieselben ICAO-Codes | Kein automatischer Abruf durch RTH Watch |
+| [rth.info](https://www.rth.info/stationen.db/stationen.php) | Stations- und Luftfahrzeugmeldungen | 10:00, 14:00, 18:00 Uhr |
+| [tar1090-db](https://github.com/wiedehopf/tar1090-db) | Kennzeichen zu ICAO-Code | 09:30 Uhr; bei neuem Kennzeichen gegebenenfalls zusätzlich |
+| ADS-B Exchange und Airplanes.live | Externe Tracking-Zielseiten | Kein automatischer Abruf |
 
-Die Zeitangaben bezeichnen geplante Ausführungszeiten. GitHub Actions kann zeitgesteuerte Workflows verzögert oder bei hoher Auslastung gar nicht starten.
+Forgejo Actions übernimmt Tests, Datenimport und statischen Build. `main` enthält Quellcode, Konfiguration, Tests und Workflows. Der getrennte Branch `gh-pages` enthält ausschließlich den Inhalt von `dist/`, einschließlich `data/stations.json`, `CNAME` und `.nojekyll`. Eine Forgejo-Push-Spiegelung kann `gh-pages` nach GitHub übertragen; GitHub Pages veröffentlicht den Branch aus dessen Wurzel. `main` erhält keine automatisierten Datencommits.
 
-## Architektur
+Jeder Lauf stellt den letzten validierten Snapshot aus `gh-pages` wieder her. Solange dieser Branch noch nicht existiert, kann ein einmaliger Migrationsfallback den bisher veröffentlichten Datensatz laden. Falls auch dieser fehlt, ist ein vollständiger Erstimport nötig; ein fehlgeschlagener Erstimport erzeugt keine leere Website. Bei einem beschädigten Snapshot in einem vorhandenen `gh-pages`-Branch bricht der Lauf ab.
 
-```text
-rth.info ──────────┐
-                  ├─> GitHub Actions (Node.js, Parser, Validierung)
-tar1090-db ───────┘            │
-                               ├─> Wiederherstellbarer Datensnapshot
-Konfiguration/Overrides ──────┤
-                               └─> Statischer Build: HTML / CSS / JS / JSON
-                                              │
-                                              v
-                                        GitHub Pages
-                                              │
-                              Suche, Filter, Browserfavoriten
-                                              │
-                              Externe RTH-/Tracking-Links
-```
-
-Das veröffentlichte Dashboard benötigt weder einen laufenden Node.js-Dienst noch eine Datenbank oder eigene Backend-API. Automatisch generierte Daten werden als GitHub-Actions- und Pages-Artefakte verwaltet und **nicht** in den Quellcode-Branch committed.
+Stündliche Kontrollläufe um `11:30` bis `22:30` Uhr prüfen nur die gespeicherten Erfolgszeiten und Fehlerzustände. Fehlt ein vollständiger geplanter Import, wird der betroffene Datenabruf höchstens zweimal zusätzlich versucht, mit mindestens 60 Minuten Abstand. Teilimporte zählen nicht als vollständiger Erfolg. Ohne Nachholbedarf erfolgen kein Quellenabruf, Build oder Deployment.
 
 ## Bereitstellung
 
-**Voraussetzungen:** GitHub-Repository mit Branch `main`, aktivierte GitHub Actions und GitHub Pages sowie Node.js 24 für die lokale Entwicklung. Die Bereitstellung erfordert keine zusätzlichen API-Schlüssel.
+Ein Forgejo-Runner mit dem Label `rthwatch-node24` und Node.js 24 ist erforderlich. Der Workflow nutzt die Forgejo-kompatible Checkout-Action und standardmäßig den kurzlebigen, repositorybezogenen `FORGEJO_TOKEN`. Dieser muss Git-Commits nach `gh-pages` pushen dürfen. Falls lokale Branch-Regeln das verhindern, kann ein repositorybezogenes Secret `RTH_WATCH_DEPLOY_TOKEN` verwendet werden. Die optionale Actions-Variable `RTH_WATCH_CI_EMAIL` steuert die technische Commit-E-Mail; ohne sie wird `ci@rth-watch.invalid` verwendet.
 
-1. Projektdateien einschließlich versteckter Dateien (`.github/`, `.gitignore`) in das Repository übernehmen.
-2. Lokal `npm install` und `npm test` ausführen und die erzeugte `package-lock.json` zusammen mit dem Quellcode committen.
-3. In den Repository-Einstellungen unter **Settings → Pages** die Quelle **GitHub Actions** auswählen.
-4. Unter **Actions → RTH Watch - update data and publish Pages** den Workflow einmalig manuell mit dem Modus `full` starten.
-5. Nach erfolgreichen Build- und Deployment-Jobs die unter **Settings → Pages** angezeigte Website aufrufen.
+Der erste produktive Lauf wird in Forgejo auf `main` mit `workflow_dispatch` und dem Modus `full` gestartet. Er erstellt `gh-pages` automatisch als unabhängigen Orphan Branch. Nach Prüfung des Builds und der Spiegelung wird GitHub Pages auf **Deploy from a branch → gh-pages → /(root)** umgestellt. Die Custom Domain ist `rthwatch.nolden.cloud`; HTTPS und die öffentliche Veröffentlichung sind separat zu prüfen. Normale Deployments übernehmen die Historie von `gh-pages`. Sie verwenden keinen Force-Push, und ein veralteter `main`-Stand oder ein konkurrierender Push führt zum Abbruch.
 
-Ein Push relevanter Änderungen auf `main` veröffentlicht die Anwendung mit dem letzten gültigen Datensatz erneut. Der erste Lauf führt bei fehlendem Datensatz automatisch einen vollständigen Import aus.
+Manuelle Modi: `full` aktualisiert beide Quellen, `stations` nur Stationsdaten mit bedarfsweisem ICAO-Abruf, `aircraft` die ICAO-Datenbank, `publish` erzeugt die Website aus dem bestehenden Snapshot mit aktuellen Overrides, und `reconcile` holt nur fällige Importe nach. Relevante Pushes auf `main` lösen `publish` aus; reine Dokumentationsänderungen und Pushes auf `gh-pages` lösen keinen Import aus.
 
-**Voraussetzung für den produktiven Einsatz:** Die Nutzungsbedingungen der externen Datenquellen müssen den geplanten automatisierten Abruf und die öffentliche Weiterveröffentlichung erlauben; gegebenenfalls ist eine Freigabe einzuholen.
-
-## Lokal entwickeln und testen
+## Lokale Entwicklung
 
 ```bash
-npm install
+npm ci
 npm test
-
-# Nur bei bestehendem, zuvor generiertem Snapshot:
-npm run build
+node scripts/generate.mjs --mode=publish
 python3 -m http.server 8080 -d dist
 ```
 
-Ein vollständiger lokaler Liveimport ist mit `npm run sync:all` möglich. Er benötigt Netzwerkzugriff und ist nur bei zulässigem Datenabruf auszuführen. Der Build schreibt die Website nach `dist/`; bestehende Eingangsdaten für einen lokalen `publish`-Build liegen optional unter `.state/stations.json`.
+`publish` benötigt einen validierten Snapshot unter `.state/stations.json`; ohne diesen führt der Generator einen vollen Bootstrap aus. Liveimporte sollten nur im Rahmen der Nutzungsbedingungen der Datenquellen ausgeführt werden. Lokale und generierte Daten sind von `main` ausgeschlossen. Die versionierten Dateien `config/station-overrides.json` und `config/hex-overrides.json` bleiben Eingaben.
 
-## Verzeichnisstruktur
+## Projektdateien
 
-```text
-.github/workflows/pages.yml     GitHub-Actions-Import und Pages-Deployment
-config/                         Versionierte, optionale manuelle Zuordnungen
-docs/                           Technische Dokumentation, Datenpflege, Teststatus
-public/                         Statische Dashboard-Oberfläche
-scripts/                        Importsteuerung und Snapshot-Wiederherstellung
-src/                            Parser, Netzwerklayer, Validierung und Datenpipeline
-test/                           Automatisierte Tests
-.gitignore                      Ausschluss lokaler und generierter Laufzeitdaten
-```
+- `.forgejo/workflows/pages.yml`: produktiver Import- und Veröffentlichungsworkflow.
+- `.forgejo/workflows/runner-test.yml`: manuell startbare Runner-Diagnose.
+- `scripts/`: Moduswahl, Wiederherstellung, Generator und Deployment.
+- `src/`: Parser, HTTP-Abruf, Validierung, Datenpipeline und Reconcile.
+- `public/`: statisches Dashboard mit relativen Asset-Pfaden.
+- `docs/`: [Technische Dokumentation](docs/DOKUMENTATION.md), [manuelle Zuordnungen](docs/MANUELLE-ZUORDNUNGEN.md) und [Teststatus](docs/TESTPROTOKOLL.md).
 
-### Versionierte Konfiguration und generierte Daten
-
-Die Dateien `config/hex-overrides.json` und `config/station-overrides.json` sind **bewusst versionierte Konfiguration**. Sie dienen der manuellen Korrektur von ICAO-Codes und Stationszuordnungen. Änderungen an diesen Dateien werden bei der nächsten Veröffentlichung berücksichtigt.
-
-Die Verzeichnisse `dist/`, `.state/`, `data/` und `public/data/` sowie SQLite-Dateien sind durch `.gitignore` ausgeschlossen. Das automatische Backup liegt in GitHub-Actions-Artefakten; als zusätzliche Wiederherstellungsquelle dient der zuletzt veröffentlichte Pages-Datensatz.
-
-## Dokumentation
-
-- [Technische Dokumentation](docs/DOKUMENTATION.md)
-- [Manuelle Stations- und ICAO-Zuordnungen](docs/MANUELLE-ZUORDNUNGEN.md)
-- [Implementierungs- und Teststatus](docs/TESTPROTOKOLL.md)
-- [Änderungsprotokoll](CHANGELOG.md)
-
-**Projektstatus:** Die Parser- und vollständigen Integrationsläufe mit sämtlichen realen Stationen sind beim ersten produktiven GitHub-Actions-Import zu verifizieren. Ein erfolgreicher Konnektivitätstest allein ersetzt diesen Integrationstest nicht.
-
-**Hinweis:** RTH Watch steht in keiner offiziellen Verbindung zu rth.info, ADS-B Exchange, Airplanes.live oder dem tar1090-db-Projekt. Externe Daten und Links bleiben von deren Verfügbarkeit und Nutzungsbedingungen abhängig.
+RTH Watch steht in keiner offiziellen Verbindung zu rth.info, ADS-B Exchange, Airplanes.live oder dem tar1090-db-Projekt. Externe Daten und Links hängen von deren Verfügbarkeit und Nutzungsbedingungen ab.

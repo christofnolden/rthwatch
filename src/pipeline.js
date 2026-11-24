@@ -79,10 +79,14 @@ export async function updateSnapshot(previous, options) {
   const registrations = { ...(previous?.registrations || {}) };
   const status = {
     lastStationsSync: previous?.status?.lastStationsSync || null,
+    lastStationsCompleteSync: previous?.status?.lastStationsCompleteSync ||
+      (previous?.status?.lastResult?.errors === 0 ||
+        (!previous?.status?.lastResult && !previous?.status?.lastStationsError) ? previous?.status?.lastStationsSync : null),
     lastAircraftSync: previous?.status?.lastAircraftSync || null,
     lastStationsError: previous?.status?.lastStationsError || '',
     lastAircraftError: previous?.status?.lastAircraftError || '',
-    lastResult: previous?.status?.lastResult || null
+    lastResult: previous?.status?.lastResult || null,
+    ...(previous?.status?.reconcile ? { reconcile: previous.status.reconcile } : {})
   };
 
   const shouldCrawl = mode === 'full' || mode === 'stations' || (!previous && mode === 'aircraft');
@@ -120,6 +124,7 @@ export async function updateSnapshot(previous, options) {
         rawStations = parsed; // Complete valid crawl: remove genuinely missing stations.
       }
       status.lastStationsSync = now().toISOString();
+      if (!failedIds.length) status.lastStationsCompleteSync = status.lastStationsSync;
       status.lastStationsError = failedIds.length ?
         `${status.lastStationsSync} — ${failedIds.length} Station(en) nicht aktualisiert; alte Daten beibehalten` : '';
       status.lastResult = { found: overview.length, updated: parsed.length, errors: failedIds.length, failedIds };
@@ -127,6 +132,7 @@ export async function updateSnapshot(previous, options) {
     } catch (error) {
       if (!sourceStations.length) throw error; // First publication must NEVER be empty.
       status.lastStationsError = conciseError(error);
+      status.lastResult = { found: 0, updated: 0, errors: sourceStations.length, failedIds: [] };
       console.warn(`[stations] Source unavailable; previous snapshot preserved: ${error.message}`);
     }
   }
@@ -154,7 +160,7 @@ export async function updateSnapshot(previous, options) {
   // Retain only needed machine keys in public snapshot; avoid committing a huge upstream DB.
   const selected = Object.fromEntries([...wanted].filter(key => cleanIcao(registrations[key])).map(key => [key, registrations[key]]));
   const view = viewFromSources(rawStations, selected, hex, manual, status);
-  return {
+  const result = {
     schemaVersion: SCHEMA_VERSION,
     generatedAt: now().toISOString(),
     sourceStations: rawStations.sort((a, b) => a.id - b.id),
@@ -162,4 +168,9 @@ export async function updateSnapshot(previous, options) {
     stations: view.stations,
     status: view.status
   };
+  if (previous) {
+    const withoutTimestamp = ({ generatedAt, ...rest }) => JSON.stringify(rest);
+    if (withoutTimestamp(result) === withoutTimestamp(previous)) result.generatedAt = previous.generatedAt;
+  }
+  return result;
 }

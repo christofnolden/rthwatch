@@ -1,9 +1,9 @@
 {
   "name": "rth-watch",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
-  "description": "Static rescue helicopter station dashboard powered by GitHub Pages and GitHub Actions",
+  "description": "Static rescue helicopter station dashboard built with Forgejo Actions and published via GitHub Pages",
   "engines": { "node": ">=24.0.0" },
   "scripts": {
     "build": "node scripts/generate.mjs --mode=publish",
