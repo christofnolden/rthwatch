@@ -9,6 +9,11 @@ import {
 export { SCHEMA_VERSION, validateSnapshot, parseHexOverrides, parseStationOverrides } from './validation.js';
 const MODES = new Set(['full', 'stations', 'aircraft', 'publish']);
 
+function canonicalJson(value) {
+  return JSON.stringify(value, (_key, item) => item && typeof item === 'object' && !Array.isArray(item)
+    ? Object.fromEntries(Object.keys(item).sort().map(key => [key, item[key]])) : item);
+}
+
 export function activeRegistrationKeys(rawStations, stationOverrides) {
   const keys = new Set();
   for (const row of rawStations) {
@@ -158,7 +163,8 @@ export async function updateSnapshot(previous, options) {
     }
   }
   // Retain only needed machine keys in public snapshot; avoid committing a huge upstream DB.
-  const selected = Object.fromEntries([...wanted].filter(key => cleanIcao(registrations[key])).map(key => [key, registrations[key]]));
+  const selected = Object.fromEntries([...wanted].filter(key => cleanIcao(registrations[key]))
+    .sort().map(key => [key, registrations[key]]));
   const view = viewFromSources(rawStations, selected, hex, manual, status);
   const result = {
     schemaVersion: SCHEMA_VERSION,
@@ -169,8 +175,9 @@ export async function updateSnapshot(previous, options) {
     status: view.status
   };
   if (previous) {
-    const withoutTimestamp = ({ generatedAt, ...rest }) => JSON.stringify(rest);
-    if (withoutTimestamp(result) === withoutTimestamp(previous)) result.generatedAt = previous.generatedAt;
+    const { generatedAt: previousGeneratedAt, ...previousContent } = previous;
+    const { generatedAt: _newGeneratedAt, ...currentContent } = result;
+    if (canonicalJson(currentContent) === canonicalJson(previousContent)) result.generatedAt = previousGeneratedAt;
   }
   return result;
 }

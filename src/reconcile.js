@@ -46,5 +46,8 @@ export function recordReconcile(snapshot, previous, decision, now = new Date()) 
     next[source] = { slot, attempts: (old?.slot === slot ? old.attempts : 0) + 1, lastAttempt: now.toISOString() };
   }
   snapshot.status.reconcile = next;
+  if (snapshot.generatedAt === previous?.generatedAt && decision.sources.length) {
+    snapshot.generatedAt = now.toISOString();
+  }
   return snapshot;
 }

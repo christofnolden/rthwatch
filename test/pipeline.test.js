@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { recordReconcile } from '../src/reconcile.js';
 import {
   updateSnapshot, validateSnapshot, parseHexOverrides, parseStationOverrides,
   viewFromSources
@@ -138,4 +139,54 @@ test('publish preserves generatedAt when snapshot content is unchanged', async (
     fetchAircraft: async () => { throw new Error('publish must not fetch aircraft'); } });
   assert.equal(published.generatedAt, previous.generatedAt);
   assert.equal(published.status.lastStationsCompleteSync, previous.status.lastStationsCompleteSync);
+});
+test('bootstrap and restored publish snapshots are deterministic across mapping key order', async () => {
+  const bootstrap = await updateSnapshot(null, {
+    ...options,
+    fetchPage: async url => {
+      if (url.includes('stationen.php')) return overview;
+      const id = Number(new URL(url).searchParams.get('id'));
+      const item = new Map([[1, 'Christoph 1'], [3, 'Christoph 3'], [68, 'Christoph 68'],
+        [171, 'Air Rescue Nürburgring'], [210, 'Lifeliner 1'], [220, 'Air Rescue 2']]).get(id);
+      return detail(item, id % 2 ? 'D-HUTH' : 'D-HXAD');
+    }
+  });
+  assert.deepEqual(Object.keys(bootstrap.registrations), ['DHUTH', 'DHXAD']);
+  assert.deepEqual(bootstrap.sourceStations.map(s => s.id), [1, 3, 68, 171, 210, 220]);
+  const restored = JSON.parse(JSON.stringify(bootstrap));
+  restored.registrations = Object.fromEntries(Object.entries(restored.registrations).reverse());
+  restored.status = Object.fromEntries(Object.entries(restored.status).reverse());
+  const noNetwork = { fetchPage: async () => { throw new Error('unexpected station request'); },
+    fetchAircraft: async () => { throw new Error('unexpected aircraft request'); } };
+  const first = await updateSnapshot(restored, { ...options, ...noNetwork, mode: 'publish',
+    now: () => new Date('2026-09-28T11:00:00Z') });
+  assert.equal(first.generatedAt, bootstrap.generatedAt);
+  assert.deepEqual(Object.keys(first.registrations), ['DHUTH', 'DHXAD']);
+  const roundTripped = JSON.parse(JSON.stringify(first));
+  const second = await updateSnapshot(roundTripped, { ...options, ...noNetwork, mode: 'publish',
+    now: () => new Date('2026-09-29T11:00:00Z') });
+  const bytes = value => Buffer.from(JSON.stringify(value, null, 2) + '\n');
+  assert.deepEqual(bytes(second), bytes(first));
+  assert.equal(second.generatedAt, bootstrap.generatedAt);
+});
+
+test('semantic changes update generatedAt while object key order does not', async () => {
+  const initial = await updateSnapshot(null, options);
+  const later = { ...options, mode: 'publish', now: () => new Date('2026-09-28T11:00:00Z') };
+  const mapping = await updateSnapshot(initial, { ...later, mode: 'aircraft',
+    fetchAircraft: async () => ({ DHXAD: 'abcdef' }) });
+  assert.notEqual(mapping.generatedAt, initial.generatedAt);
+  assert.equal(mapping.registrations.DHXAD, 'abcdef');
+  const override = await updateSnapshot(initial, { ...later,
+    stationOverrides: { 1: { registration: 'D-HUTH', icao: '3e0965' } } });
+  assert.notEqual(override.generatedAt, initial.generatedAt);
+  assert.equal(mapping.status.lastAircraftSync, '2026-09-28T11:00:00.000Z');
+  const reconcile = await updateSnapshot(initial, later);
+  recordReconcile(reconcile, initial, { sources: ['stations'],
+    slots: { stations: '2026-09-28T08:00:00Z' } }, new Date('2026-09-28T11:00:00Z'));
+  assert.notEqual(reconcile.generatedAt, initial.generatedAt);
+  assert.equal(reconcile.status.reconcile.stations.attempts, 1);
+  const reordered = structuredClone(initial);
+  reordered.sourceStations.reverse();
+  assert.notEqual((await updateSnapshot(reordered, later)).generatedAt, initial.generatedAt);
 });

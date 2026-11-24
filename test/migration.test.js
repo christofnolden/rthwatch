@@ -179,3 +179,32 @@ test('reconcile with no pending import exits before network, build and deploymen
   assert.match(result.stdout, /No import due; no build or deployment/);
   await assert.rejects(fs.stat(path.join(temp, 'dist')), { code: 'ENOENT' });
 });
+test('two restored publish builds produce byte-identical website files', async t => {
+  const f = await fixture(); t.after(f.cleanup);
+  const work = path.join(f.root, 'repeat-build');
+  await fs.mkdir(path.join(work, '.state'), { recursive: true });
+  await fs.cp(new URL('../public/', import.meta.url), path.join(work, 'public'), { recursive: true });
+  await fs.cp(new URL('../config/', import.meta.url), path.join(work, 'config'), { recursive: true });
+  const snapshot = structuredClone(f.data);
+  snapshot.sourceStations = [3, 1, 2].map(id => ({ id, callsign: `Christoph ${id}`,
+    registration: id === 2 ? 'D-HXAD' : 'D-HUTH',
+    rthUrl: `https://www.rth.info/stationen.db/station.php?id=${id}&show=1` }));
+  snapshot.stations = [...snapshot.sourceStations].sort((a, b) => a.id - b.id);
+  snapshot.registrations = { DHXAD: '3e0f5f', DHUTH: '3e0965' };
+  snapshot.status.total = 3;
+  snapshot.status.mapped = 3;
+  snapshot.status.noRegistration = 0;
+  snapshot.status.timezone = 'Europe/Berlin';
+  snapshot.status.lastStationsCompleteSync = snapshot.status.lastStationsSync;
+  await fs.writeFile(path.join(work, '.state/stations.json'), JSON.stringify(snapshot));
+  const script = new URL('../scripts/generate.mjs', import.meta.url).pathname;
+  const run = () => exec('node', [script, '--mode=publish'],
+    { cwd: work, env: { ...process.env, RTH_MIN_STATIONS: '3' } });
+  await run();
+  const files = ['index.html', 'assets/app.js', 'data/stations.json', 'CNAME', '.nojekyll'];
+  const before = await Promise.all(files.map(file => fs.readFile(path.join(work, 'dist', file))));
+  await fs.copyFile(path.join(work, 'dist/data/stations.json'), path.join(work, '.state/stations.json'));
+  await run();
+  const after = await Promise.all(files.map(file => fs.readFile(path.join(work, 'dist', file))));
+  before.forEach((bytes, i) => assert.equal(after[i].toString(), bytes.toString(), files[i]));
+});
