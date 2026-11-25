@@ -1,4 +1,4 @@
-# RTH Watch v2.2.0 – Technische Dokumentation
+# RTH Watch v2.2.1 – Technische Dokumentation
 
 **Plattform:** Forgejo Actions für CI/CD; GitHub Pages für statisches Hosting.
 **Runtime:** Node.js 24 im kurzlebigen Workflow-Container; kein dauerhafter Anwendungsserver.
@@ -27,14 +27,17 @@ Ein Lauf stellt vor dem Import `gh-pages:data/stations.json` wieder her und vali
 
 ## Zeitplan, Modi und Nachholen
 
-| Termin (Berlin) | Modus | Wirkung |
-|---|---|---|
-| 09:30 täglich | `aircraft` | ICAO-Datenbank aktualisieren |
-| 10:00, 14:00, 18:00 täglich | `stations` | Stationsdaten aktualisieren; ICAO bei Bedarf |
-| 11:30–22:30 stündlich | `reconcile` | Fehlende vollständige Termine prüfen und nötige Quellen nachholen |
-| Relevanter Push auf `main` | `publish` | Snapshot mit aktuellem Code und Overrides neu ausgeben |
+| Workflow | Termin (Europe/Berlin) | Modus | Wirkung |
+|---|---|---|---|
+| `aircraft.yml` | 09:30 täglich | `aircraft` | ICAO-Datenbank aktualisieren |
+| `stations.yml` | 10:00, 14:00, 18:00 täglich | `stations` | Stationsdaten aktualisieren und ICAO bei Bedarf ergänzen |
+| `reconcile.yml` | 11:30–22:30 stündlich | `reconcile` | Fehlende vollständige Termine prüfen und nötige Quellen nachholen |
+| `pages.yml` | Relevanter Push auf `main` | `publish` | Snapshot mit aktuellem Code und Overrides neu ausgeben |
+| `pages.yml` | Manueller Start auf `main` | Gewählte Option | `full`, `stations`, `aircraft`, `publish` oder `reconcile` |
 
-`workflow_dispatch` erlaubt `full`, `stations`, `aircraft`, `publish` und `reconcile`. Der Modus wird aus Forgejo-Ereignis und dessen Cron-Ausdruck bestimmt. Nur `refs/heads/main` darf veröffentlichen. Der gemeinsame Concurrency-Schlüssel `rth-watch-pages` serialisiert die Läufe mit `cancel-in-progress: false`; ein zusätzlicher Vergleich mit dem aktuellen `main`-SHA verhindert den Rollback durch einen älteren Lauf.
+Alle vier Workflows in `.forgejo/workflows/` übergeben ihren Modus als Eingabe an `publish-reusable.yml`. Die geplanten Aufrufe übergeben jeweils einen festen Wert. Damit hängt der Modus weder vom Cron-Feld im Forgejo-Ereignis noch von der Startzeit ab. Der gemeinsame Job validiert den Modus und führt Veröffentlichungen ausschließlich für `refs/heads/main` aus.
+
+Forgejo serialisiert die vier Aufrufer über die gemeinsame Gruppe `rth-watch-pages` mit `cancel-in-progress: false`. Der aufgerufene Workflow belegt keine eigene Gruppe. Vor einem Push prüft das Deployment zusätzlich den aktuellen `main`-SHA und den seit dem Restore beobachteten Stand von `gh-pages`.
 
 Reconcile verwendet die tatsächlichen UTC-Zeitpunkte der lokalen Berliner Termine und berücksichtigt Sommer- und Winterzeit. Ein teilweiser Stationsimport schließt den Termin nicht ab. Offene Termine beider Quellen werden in einem `full`-Lauf zusammengefasst. Pro Quelle und regulärem Termin gibt es höchstens zwei zusätzliche Versuche im Abstand von mindestens 60 Minuten. Der Versuchszähler liegt im veröffentlichten Snapshot und überlebt Runner-Neustarts. Ein Kontrolllauf ohne Bedarf ruft keine Datenquelle ab, baut keine Website und erzeugt keinen Deployment-Commit. Die geplanten Termine liegen außerhalb der Umstellungsstunden der Sommerzeit.
 
@@ -42,7 +45,7 @@ Reconcile verwendet die tatsächlichen UTC-Zeitpunkte der lokalen Berliner Termi
 
 `src/deploy.js` validiert `dist/`, einschließlich JSON, CNAME, `.nojekyll` und sicherer Dateitypen. Ein temporäres Git-Repository übernimmt ausschließlich diese Dateien. Fehlt `gh-pages`, wird dort ein Orphan Branch erzeugt; andernfalls wird der aktuelle Branch geholt und dessen Historie fortgeführt. Der beim Restore beobachtete `gh-pages`-Commit wird vor dem Deployment erneut geprüft. Vor dem Push werden `main` und `gh-pages` nochmals gelesen. Änderungen am Remote oder ein abgewiesener Push brechen kontrolliert ab. Der Push geht ausschließlich an den anhand `FORGEJO_SERVER_URL` geprüften Forgejo-Remote und verwendet keinen Force-Push. Bei identischem Output wird kein Commit erzeugt; `generatedAt` bleibt bei unverändertem Datensatz erhalten.
 
-Die Authentifizierung nutzt bevorzugt den kurzlebigen repositorybezogenen `FORGEJO_TOKEN`. Ein `GIT_ASKPASS`-Skript im temporären Verzeichnis übergibt den Token nur während der Git-Operationen. Das optionale Repository-Secret `RTH_WATCH_DEPLOY_TOKEN` kann Branch-Berechtigungsprobleme lösen. `RTH_WATCH_CI_EMAIL` ist eine optionale Actions-Variable. Token werden weder in Git-URLs noch in Commit-Nachrichten oder `dist/` gespeichert. Die Checkout-Action persistiert keine Credentials. Fremde Pull Requests lösen diesen Workflow nicht aus.
+Die Authentifizierung nutzt bevorzugt den kurzlebigen repositorybezogenen `FORGEJO_TOKEN`. Ein `GIT_ASKPASS`-Skript im temporären Verzeichnis übergibt den Token nur während der Git-Operationen. Die Aufrufer verwenden `secrets: inherit`, sodass das optionale Repository-Secret `RTH_WATCH_DEPLOY_TOKEN` auch im gemeinsamen Job verfügbar ist. Dieser bezieht die optionale Commit-Adresse `RTH_WATCH_CI_EMAIL` weiterhin aus dem Repository-Kontext `vars`. Token werden weder in Git-URLs noch in Commit-Nachrichten oder `dist/` gespeichert. Die Checkout-Action persistiert keine Credentials. Fremde Pull Requests lösen diesen Workflow nicht aus.
 
 Ein erfolgreicher Forgejo-Push belegt noch keine erfolgreiche Spiegelung oder GitHub-Pages-Veröffentlichung. Diese Schritte sind bei der Inbetriebnahme separat zu prüfen. Das Dashboard ist eine Informationsanzeige und bestätigt keinen aktuellen Standort oder Flug eines Luftfahrzeugs.
 

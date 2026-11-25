@@ -1,6 +1,6 @@
 # RTH Watch 🚁
 
-**Version 2.2.0 · Statisches Dashboard**
+**Version 2.2.1 · Statisches Dashboard**
 
 RTH Watch ist ein unabhängiges, responsives Dashboard für Rettungs- und Intensivtransporthubschrauber. Es zeigt zuletzt bei [rth.info](https://www.rth.info/stationen.db/stationen.php) gemeldete Stationsdaten und verknüpft bekannte ICAO-Codes mit ADS-B Exchange und Airplanes.live. Die Angaben sind keine verlässliche Echtzeit-Zuordnung von Luftfahrzeugen zu Stationen und kein Live-Flugstatus.
 
@@ -25,7 +25,7 @@ Forgejo Actions übernimmt Tests, Datenimport und statischen Build. `main` enth�
 
 Jeder Lauf stellt den letzten validierten Snapshot aus `gh-pages` wieder her. Solange dieser Branch noch nicht existiert, kann ein einmaliger Migrationsfallback den bisher veröffentlichten Datensatz laden. Falls auch dieser fehlt, ist ein vollständiger Erstimport nötig; ein fehlgeschlagener Erstimport erzeugt keine leere Website. Bei einem beschädigten Snapshot in einem vorhandenen `gh-pages`-Branch bricht der Lauf ab.
 
-Stündliche Kontrollläufe um `11:30` bis `22:30` Uhr prüfen nur die gespeicherten Erfolgszeiten und Fehlerzustände. Fehlt ein vollständiger geplanter Import, wird der betroffene Datenabruf höchstens zweimal zusätzlich versucht, mit mindestens 60 Minuten Abstand. Teilimporte zählen nicht als vollständiger Erfolg. Ohne Nachholbedarf erfolgen kein Quellenabruf, Build oder Deployment.
+Die drei geplanten Workflows übergeben ihren jeweiligen Modus fest an den gemeinsamen Veröffentlichungsworkflow. Auch bei verzögerten Starts und Wiederholungen bleibt der Modus gleich. Stündliche Kontrollläufe um `11:30` bis `22:30` Uhr prüfen nur die gespeicherten Erfolgszeiten und Fehlerzustände. Fehlt ein vollständiger geplanter Import, wird der betroffene Datenabruf höchstens zweimal zusätzlich versucht, mit mindestens 60 Minuten Abstand. Teilimporte zählen nicht als vollständiger Erfolg. Ohne Nachholbedarf erfolgen kein Quellenabruf, Build oder Deployment.
 
 ## Bereitstellung
 
@@ -48,7 +48,9 @@ python3 -m http.server 8080 -d dist
 
 ## Projektdateien
 
-- `.forgejo/workflows/pages.yml`: produktiver Import- und Veröffentlichungsworkflow.
+- `.forgejo/workflows/pages.yml`: Veröffentlichung bei relevanten Pushes auf `main` und manuelle Ausführung.
+- `.forgejo/workflows/aircraft.yml`, `stations.yml`, `reconcile.yml`: getrennte Zeitpläne für ICAO, Stationen und Nachholprüfung.
+- `.forgejo/workflows/publish-reusable.yml`: gemeinsame Verarbeitung mit explizitem Modus.
 - `.forgejo/workflows/runner-test.yml`: manuell startbare Runner-Diagnose.
 - `scripts/`: Moduswahl, Wiederherstellung, Generator und Deployment.
 - `src/`: Parser, HTTP-Abruf, Validierung, Datenpipeline und Reconcile.

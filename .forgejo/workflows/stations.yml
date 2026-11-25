@@ -1,0 +1,17 @@
+name: RTH Watch - update stations
+
+on:
+  schedule:
+    - cron: '0 10,14,18 * * *'
+      timezone: Europe/Berlin
+
+concurrency:
+  group: rth-watch-pages
+  cancel-in-progress: false
+
+jobs:
+  stations:
+    uses: ./.forgejo/workflows/publish-reusable.yml
+    with:
+      mode: stations
+    secrets: inherit

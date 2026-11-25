@@ -1,0 +1,60 @@
+name: RTH Watch - reusable publication
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        description: 'Import or publication mode'
+        required: true
+        type: string
+
+# The calling workflows hold the shared concurrency group.
+jobs:
+  publish:
+    if: ${{ forgejo.ref == 'refs/heads/main' }}
+    runs-on: rthwatch-node24
+    timeout-minutes: 170
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout main source
+        uses: https://data.forgejo.org/actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Check runtime and install dependencies
+        run: |
+          set -euo pipefail
+          node --version
+          npm --version
+          test "$(node -p 'process.versions.node.split(".")[0]')" = 24
+          npm ci --no-audit --no-fund
+      - name: Run tests
+        run: npm test
+      - name: Restore last published snapshot
+        env:
+          RTH_WATCH_DEPLOY_TOKEN: ${{ secrets.RTH_WATCH_DEPLOY_TOKEN }}
+        run: node scripts/restore-state.mjs
+      - name: Validate requested mode
+        id: task
+        env:
+          REQUESTED_MODE: ${{ inputs.mode }}
+        run: node scripts/select-mode.mjs
+      - name: Import and build website
+        env:
+          MODE: ${{ steps.task.outputs.mode }}
+          FETCH_TIMEOUT_MS: '45000'
+          RTH_REQUEST_DELAY_MS: '1200'
+          RTH_MIN_STATIONS: '15'
+        run: node scripts/generate.mjs --mode="$MODE"
+      - name: Publish validated website to Forgejo
+        env:
+          RTH_WATCH_DEPLOY_TOKEN: ${{ secrets.RTH_WATCH_DEPLOY_TOKEN }}
+          RTH_WATCH_CI_EMAIL: ${{ vars.RTH_WATCH_CI_EMAIL }}
+        run: |
+          set -euo pipefail
+          if [ -f dist/data/stations.json ]; then
+            node scripts/deploy-pages.mjs
+          else
+            echo '[deploy] Reconcile found no pending import; no deployment.'
+          fi

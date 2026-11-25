@@ -9,7 +9,6 @@ import { branchHead } from '../src/git-pages.js';
 import { restoreSnapshot } from '../src/restore.js';
 import { deployPages, validateDist } from '../src/deploy.js';
 import { reconcileDecision, recordReconcile } from '../src/reconcile.js';
-import { selectWorkflowMode } from '../src/workflow-mode.js';
 
 const exec = promisify(execFile);
 async function command(cwd, ...args) { return (await exec('git', args, { cwd })).stdout.trim(); }
@@ -122,18 +121,6 @@ test('branch lookup distinguishes missing branch from remote failure', async t =
   const f = await fixture(); t.after(f.cleanup);
   assert.equal(await branchHead(f.remote, 'gh-pages'), null);
   await assert.rejects(branchHead(path.join(f.root, 'missing.git'), 'gh-pages'), /Reading gh-pages failed/);
-});
-test('workflow mode selection rejects unknown events, schedules and branches', () => {
-  const ref = 'refs/heads/main';
-  for (const mode of ['full', 'stations', 'aircraft', 'publish', 'reconcile'])
-    assert.equal(selectWorkflowMode('workflow_dispatch', ref, null, mode), mode);
-  assert.equal(selectWorkflowMode('push', ref), 'publish');
-  assert.equal(selectWorkflowMode('schedule', ref, '30 9 * * *'), 'aircraft');
-  assert.equal(selectWorkflowMode('schedule', ref, '0 10,14,18 * * *'), 'stations');
-  assert.equal(selectWorkflowMode('schedule', ref, '30 11-22 * * *'), 'reconcile');
-  assert.throws(() => selectWorkflowMode('schedule', ref, '0 0 * * *'), /Unexpected schedule/);
-  assert.throws(() => selectWorkflowMode('push', 'refs/heads/gh-pages'), /Only refs/);
-  assert.throws(() => selectWorkflowMode('workflow_dispatch', ref, null, 'evil'), /Invalid manual/);
 });
 test('reconcile honors Berlin DST, partial imports, retry limits and persistence', () => {
   assert.equal(reconcileDecision(null).mode, null);

@@ -60,7 +60,7 @@ export async function deployPages({ remote, sourceSha, dist, env = process.env, 
     }
     if (changes.code !== 1) assertGit(changes, 'Checking deployment changes');
     const email = /^[^\s@]+@[^\s@]+$/.test(authorEmail) ? authorEmail : 'ci@rth-watch.invalid';
-    assertGit(await git(['-c', 'user.name=RTH Watch CI', '-c', `user.email=${email}`, 'commit', '-q', '-m', `deploy: publish RTH Watch v2.2.0 (source ${sourceSha.slice(0, 12)})`], { cwd: temp, env }), 'Committing website');
+    assertGit(await git(['-c', 'user.name=RTH Watch CI', '-c', `user.email=${email}`, 'commit', '-q', '-m', `deploy: publish RTH Watch v2.2.1 (source ${sourceSha.slice(0, 12)})`], { cwd: temp, env }), 'Committing website');
     const newHead = assertGit(await git(['rev-parse', 'HEAD'], { cwd: temp, env }), 'Reading deployment commit');
     await beforePush();
     const mainBeforePush = await branchHead(remote, 'main', { env });

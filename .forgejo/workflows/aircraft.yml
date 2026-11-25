@@ -1,0 +1,17 @@
+name: RTH Watch - update aircraft mappings
+
+on:
+  schedule:
+    - cron: '30 9 * * *'
+      timezone: Europe/Berlin
+
+concurrency:
+  group: rth-watch-pages
+  cancel-in-progress: false
+
+jobs:
+  aircraft:
+    uses: ./.forgejo/workflows/publish-reusable.yml
+    with:
+      mode: aircraft
+    secrets: inherit

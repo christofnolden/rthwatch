@@ -1,0 +1,17 @@
+name: RTH Watch - reconcile missed updates
+
+on:
+  schedule:
+    - cron: '30 11-22 * * *'
+      timezone: Europe/Berlin
+
+concurrency:
+  group: rth-watch-pages
+  cancel-in-progress: false
+
+jobs:
+  reconcile:
+    uses: ./.forgejo/workflows/publish-reusable.yml
+    with:
+      mode: reconcile
+    secrets: inherit

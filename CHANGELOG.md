@@ -1,5 +1,11 @@
 # RTH Watch – Änderungsprotokoll
 
+## 2.2.1 – 25.11.2026
+
+- Zeitgesteuerte Forgejo-Läufe verwenden getrennte Workflows mit festen Modi für ICAO, Stationen und Nachholprüfung. Fehlende Cron-Angaben im Ereignis unterbrechen die Moduswahl nicht mehr.
+- Pushes, manuelle Läufe und geplante Aufrufe teilen einen Veröffentlichungsworkflow und eine gemeinsame Concurrency-Gruppe. Die Berliner Aktualisierungszeiten bleiben bestehen.
+- Identische Snapshots behalten `generatedAt`. Deterministisch sortierte ICAO-Zuordnungen vermeiden zusätzliche Deployment-Commits durch abweichende Schlüsselreihenfolgen.
+
 ## 2.2.0 – 24.11.2026
 
 - Datenimport, Tests und statischen Build von GitHub Actions auf Forgejo Actions verlagert; GitHub Pages bleibt Hosting-Ziel.

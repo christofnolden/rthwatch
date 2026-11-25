@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - '.forgejo/workflows/pages.yml'
+      - '.forgejo/workflows/aircraft.yml'
+      - '.forgejo/workflows/stations.yml'
+      - '.forgejo/workflows/reconcile.yml'
+      - '.forgejo/workflows/publish-reusable.yml'
       - 'config/**'
       - 'public/**'
       - 'scripts/**'
@@ -12,13 +16,6 @@ on:
       - 'test/**'
       - 'package.json'
       - 'package-lock.json'
-  schedule:
-    - cron: '30 9 * * *'
-      timezone: Europe/Berlin
-    - cron: '0 10,14,18 * * *'
-      timezone: Europe/Berlin
-    - cron: '30 11-22 * * *'
-      timezone: Europe/Berlin
   workflow_dispatch:
     inputs:
       mode:
@@ -39,50 +36,7 @@ concurrency:
 
 jobs:
   publish:
-    if: ${{ forgejo.ref == 'refs/heads/main' }}
-    runs-on: rthwatch-node24
-    timeout-minutes: 170
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Checkout main source
-        uses: https://data.forgejo.org/actions/checkout@v7
-        with:
-          persist-credentials: false
-      - name: Check runtime and install dependencies
-        run: |
-          set -euo pipefail
-          node --version
-          npm --version
-          test "$(node -p 'process.versions.node.split(".")[0]')" = 24
-          npm ci --no-audit --no-fund
-      - name: Run tests
-        run: npm test
-      - name: Restore last published snapshot
-        env:
-          RTH_WATCH_DEPLOY_TOKEN: ${{ secrets.RTH_WATCH_DEPLOY_TOKEN }}
-        run: node scripts/restore-state.mjs
-      - name: Select mode from Forgejo event
-        id: task
-        env:
-          SCHEDULE: ${{ forgejo.event.schedule }}
-          REQUESTED: ${{ inputs.mode }}
-        run: node scripts/select-mode.mjs
-      - name: Import and build website
-        env:
-          FETCH_TIMEOUT_MS: '45000'
-          RTH_REQUEST_DELAY_MS: '1200'
-          RTH_MIN_STATIONS: '15'
-        run: node scripts/generate.mjs --mode=${{ steps.task.outputs.mode }}
-      - name: Publish validated website to Forgejo
-        env:
-          RTH_WATCH_DEPLOY_TOKEN: ${{ secrets.RTH_WATCH_DEPLOY_TOKEN }}
-          RTH_WATCH_CI_EMAIL: ${{ vars.RTH_WATCH_CI_EMAIL }}
-        run: |
-          set -euo pipefail
-          if [ -f dist/data/stations.json ]; then
-            node scripts/deploy-pages.mjs
-          else
-            echo '[deploy] Reconcile found no pending import; no deployment.'
-          fi
+    uses: ./.forgejo/workflows/publish-reusable.yml
+    with:
+      mode: ${{ forgejo.event_name == 'push' && 'publish' || inputs.mode }}
+    secrets: inherit
