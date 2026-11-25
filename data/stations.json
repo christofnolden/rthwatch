@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-24T21:59:25.327Z",
+  "generatedAt": "2026-11-25T20:46:53.236Z",
   "sourceStations": [
     {
       "id": 1,
@@ -25,7 +25,7 @@
       "base": "Berufsgenossenschaftliche Unfallklinik",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-19",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=2&show=1"
     },
     {
@@ -51,7 +51,7 @@
       "base": "Medizinische Hochschule Hannover",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-20",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=4&show=1"
     },
     {
@@ -116,7 +116,7 @@
       "base": "Berufsgenossenschaftl. Unfallklinik",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-17",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=9&show=1"
     },
     {
@@ -168,7 +168,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-24",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1"
     },
     {
@@ -376,7 +376,7 @@
       "base": "Bundeswehrkrankenhaus Hamburg",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-23",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=29&show=1"
     },
     {
@@ -903,13 +903,13 @@
       "id": 70,
       "category": "ITH",
       "callsign": "Christoph Sachsen-Anhalt",
-      "registration": "D-HXFA",
-      "regKey": "DHXFA",
+      "registration": "D-HXFF",
+      "regKey": "DHXFF",
       "location": "Halle",
       "base": "Flugplatz Halle-Oppin - Saalkreis ( EDAQ )",
       "operator": "DRF Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-11-23",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=70&show=1"
     },
     {
@@ -935,7 +935,7 @@
       "base": "Flughafen Münster-Osnabrück ( EDDG )",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-11-21",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=72&show=1"
     },
     {
@@ -1245,10 +1245,10 @@
     "DHXCI": "3e0f98",
     "DHXCJ": "3e0f99",
     "DHXCK": "3e0f9a",
-    "DHXFA": "3e0fde",
     "DHXFB": "3e0fdf",
     "DHXFC": "3e0fe0",
     "DHXFD": "3e0fe1",
+    "DHXFF": "3e0fe3",
     "DHXFH": "3e0fe5",
     "DHXFI": "3e0fe6",
     "DHXFJ": "3e0fe7",
@@ -1387,7 +1387,7 @@
       "base": "Berufsgenossenschaftliche Unfallklinik",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-19",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=2&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e1684",
@@ -1421,7 +1421,7 @@
       "base": "Medizinische Hochschule Hannover",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-20",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=4&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e167c",
@@ -1506,7 +1506,7 @@
       "base": "Berufsgenossenschaftl. Unfallklinik",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-17",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=9&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e167d",
@@ -1574,7 +1574,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-24",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e1685",
@@ -1812,7 +1812,7 @@
       "base": "Bundeswehrkrankenhaus Hamburg",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-23",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=29&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e1679",
@@ -2724,18 +2724,18 @@
       "id": 70,
       "category": "ITH",
       "callsign": "Christoph Sachsen-Anhalt",
-      "registration": "D-HXFA",
-      "regKey": "DHXFA",
+      "registration": "D-HXFF",
+      "regKey": "DHXFF",
       "location": "Halle",
       "base": "Flugplatz Halle-Oppin - Saalkreis ( EDAQ )",
       "operator": "DRF Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-11-23",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=70&show=1",
       "assignmentSource": "rth.info",
-      "icao": "3e0fde",
+      "icao": "3e0fe3",
       "mappingSource": "tar1090",
-      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e0fde"
+      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e0fe3"
     },
     {
       "id": 71,
@@ -2781,7 +2781,7 @@
       "base": "Flughafen Münster-Osnabrück ( EDDG )",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-11-21",
+      "sightingDate": "2026-11-25",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=72&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e1211",
@@ -2858,9 +2858,9 @@
     }
   ],
   "status": {
-    "lastStationsSync": "2026-11-24T21:53:11.086Z",
-    "lastStationsCompleteSync": "2026-11-24T21:53:11.086Z",
-    "lastAircraftSync": "2026-11-24T21:53:12.039Z",
+    "lastStationsSync": "2026-11-25T20:46:52.242Z",
+    "lastStationsCompleteSync": "2026-11-25T20:46:52.242Z",
+    "lastAircraftSync": "2026-11-25T20:46:53.229Z",
     "lastStationsError": "",
     "lastAircraftError": "",
     "lastResult": {
