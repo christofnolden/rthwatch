@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-26T13:02:17.508Z",
+  "generatedAt": "2026-11-26T17:02:16.662Z",
   "sourceStations": [
     {
       "id": 1,
@@ -162,8 +162,8 @@
       "id": 13,
       "category": "RTH",
       "callsign": "Christoph 13",
-      "registration": "D-HZSN",
-      "regKey": "DHZSN",
+      "registration": "D-HVBO",
+      "regKey": "DHVBO",
       "location": "Bielefeld- Rosenhöhe",
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
@@ -1233,6 +1233,7 @@
     "DHSHP": "3e02ed",
     "DHUTH": "3e0965",
     "DHVBH": "3e0a35",
+    "DHVBO": "3e0a3c",
     "DHWFH": "3e0d41",
     "DHXAB": "3e0f5d",
     "DHXAC": "3e0f5e",
@@ -1282,7 +1283,6 @@
     "DHZSJ": "3e1681",
     "DHZSK": "3e1682",
     "DHZSM": "3e1684",
-    "DHZSN": "3e1685",
     "DHZSO": "3e1686",
     "DHZSQ": "3e1688",
     "LXHHO": "4d028c",
@@ -1568,8 +1568,8 @@
       "id": 13,
       "category": "RTH",
       "callsign": "Christoph 13",
-      "registration": "D-HZSN",
-      "regKey": "DHZSN",
+      "registration": "D-HVBO",
+      "regKey": "DHVBO",
       "location": "Bielefeld- Rosenhöhe",
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
@@ -1577,9 +1577,9 @@
       "sightingDate": "2026-11-26",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1",
       "assignmentSource": "rth.info",
-      "icao": "3e1685",
+      "icao": "3e0a3c",
       "mappingSource": "tar1090",
-      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e1685"
+      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e0a3c"
     },
     {
       "id": 14,
@@ -2858,9 +2858,9 @@
     }
   ],
   "status": {
-    "lastStationsSync": "2026-11-26T13:02:16.545Z",
-    "lastStationsCompleteSync": "2026-11-26T13:02:16.545Z",
-    "lastAircraftSync": "2026-11-26T13:02:17.501Z",
+    "lastStationsSync": "2026-11-26T17:02:15.513Z",
+    "lastStationsCompleteSync": "2026-11-26T17:02:15.513Z",
+    "lastAircraftSync": "2026-11-26T17:02:16.655Z",
     "lastStationsError": "",
     "lastAircraftError": "",
     "lastResult": {
