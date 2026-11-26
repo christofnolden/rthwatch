@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-26T08:30:17.832Z",
+  "generatedAt": "2026-11-26T09:02:18.978Z",
   "sourceStations": [
     {
       "id": 1,
@@ -168,7 +168,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-25",
+      "sightingDate": "2026-11-26",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1"
     },
     {
@@ -1574,7 +1574,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-25",
+      "sightingDate": "2026-11-26",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e1685",
@@ -2858,9 +2858,9 @@
     }
   ],
   "status": {
-    "lastStationsSync": "2026-11-25T20:46:52.242Z",
-    "lastStationsCompleteSync": "2026-11-25T20:46:52.242Z",
-    "lastAircraftSync": "2026-11-26T08:30:17.824Z",
+    "lastStationsSync": "2026-11-26T09:02:18.078Z",
+    "lastStationsCompleteSync": "2026-11-26T09:02:18.078Z",
+    "lastAircraftSync": "2026-11-26T09:02:18.971Z",
     "lastStationsError": "",
     "lastAircraftError": "",
     "lastResult": {
