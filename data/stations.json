@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-26T09:02:18.978Z",
+  "generatedAt": "2026-11-26T13:02:17.508Z",
   "sourceStations": [
     {
       "id": 1,
@@ -890,13 +890,13 @@
       "id": 69,
       "category": "ITH",
       "callsign": "Christoph Rheinland",
-      "registration": "D-HYAF",
-      "regKey": "DHYAF",
+      "registration": "D-HDOM",
+      "regKey": "DHDOM",
       "location": "Köln",
       "base": "Konrad-Adenauer-Flughafen Köln-Bonn Intl. ( EDDK )",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-11-16",
+      "sightingDate": "2026-11-26",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=69&show=1"
     },
     {
@@ -1200,6 +1200,7 @@
     }
   ],
   "registrations": {
+    "DHDOM": "3ddc04",
     "DHDRF": "3ddc4b",
     "DHDSK": "3ddc6a",
     "DHDSU": "3ddc74",
@@ -1263,7 +1264,6 @@
     "DHXFV": "3e0ff3",
     "DHXFW": "3e0ff4",
     "DHXFX": "3e0ff5",
-    "DHYAF": "3e1205",
     "DHYAK": "3e120a",
     "DHYAL": "3e120b",
     "DHYAQ": "3e1210",
@@ -2690,18 +2690,18 @@
       "id": 69,
       "category": "ITH",
       "callsign": "Christoph Rheinland",
-      "registration": "D-HYAF",
-      "regKey": "DHYAF",
+      "registration": "D-HDOM",
+      "regKey": "DHDOM",
       "location": "Köln",
       "base": "Konrad-Adenauer-Flughafen Köln-Bonn Intl. ( EDDK )",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-11-16",
+      "sightingDate": "2026-11-26",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=69&show=1",
       "assignmentSource": "rth.info",
-      "icao": "3e1205",
+      "icao": "3ddc04",
       "mappingSource": "tar1090",
-      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e1205"
+      "adsbUrl": "https://globe.adsbexchange.com/?icao=3ddc04"
     },
     {
       "id": 57,
@@ -2858,9 +2858,9 @@
     }
   ],
   "status": {
-    "lastStationsSync": "2026-11-26T09:02:18.078Z",
-    "lastStationsCompleteSync": "2026-11-26T09:02:18.078Z",
-    "lastAircraftSync": "2026-11-26T09:02:18.971Z",
+    "lastStationsSync": "2026-11-26T13:02:16.545Z",
+    "lastStationsCompleteSync": "2026-11-26T13:02:16.545Z",
+    "lastAircraftSync": "2026-11-26T13:02:17.501Z",
     "lastStationsError": "",
     "lastAircraftError": "",
     "lastResult": {
