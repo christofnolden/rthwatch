@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-27T08:30:29.126Z",
+  "generatedAt": "2026-11-27T09:02:17.086Z",
   "sourceStations": [
     {
       "id": 1,
@@ -103,20 +103,20 @@
       "base": "St.-Marien-Hospital Lünen",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-01",
+      "sightingDate": "2026-11-26",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=8&show=1"
     },
     {
       "id": 9,
       "category": "RTH",
       "callsign": "Christoph 9",
-      "registration": "D-HZSF",
-      "regKey": "DHZSF",
+      "registration": "D-HZSN",
+      "regKey": "DHZSN",
       "location": "Duisburg",
       "base": "Berufsgenossenschaftl. Unfallklinik",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-25",
+      "sightingDate": "2026-11-27",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=9&show=1"
     },
     {
@@ -168,7 +168,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-26",
+      "sightingDate": "2026-11-27",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1"
     },
     {
@@ -272,7 +272,7 @@
       "base": "Flugplatz Merzbrück ( EDKA )",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-09-27",
+      "sightingDate": "2026-11-24",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=21&show=1"
     },
     {
@@ -1278,11 +1278,11 @@
     "DHZSB": "3e1679",
     "DHZSC": "3e167a",
     "DHZSE": "3e167c",
-    "DHZSF": "3e167d",
     "DHZSG": "3e167e",
     "DHZSJ": "3e1681",
     "DHZSK": "3e1682",
     "DHZSM": "3e1684",
+    "DHZSN": "3e1685",
     "DHZSO": "3e1686",
     "DHZSQ": "3e1688",
     "LXHHO": "4d028c",
@@ -1489,7 +1489,7 @@
       "base": "St.-Marien-Hospital Lünen",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-01",
+      "sightingDate": "2026-11-26",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=8&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e0f5d",
@@ -1500,18 +1500,18 @@
       "id": 9,
       "category": "RTH",
       "callsign": "Christoph 9",
-      "registration": "D-HZSF",
-      "regKey": "DHZSF",
+      "registration": "D-HZSN",
+      "regKey": "DHZSN",
       "location": "Duisburg",
       "base": "Berufsgenossenschaftl. Unfallklinik",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-25",
+      "sightingDate": "2026-11-27",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=9&show=1",
       "assignmentSource": "rth.info",
-      "icao": "3e167d",
+      "icao": "3e1685",
       "mappingSource": "tar1090",
-      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e167d"
+      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e1685"
     },
     {
       "id": 10,
@@ -1574,7 +1574,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-26",
+      "sightingDate": "2026-11-27",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e0a3c",
@@ -2458,7 +2458,7 @@
       "base": "Flugplatz Merzbrück ( EDKA )",
       "operator": "ADAC Luftrettung",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-09-27",
+      "sightingDate": "2026-11-24",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=21&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e0f5f",
@@ -2858,9 +2858,9 @@
     }
   ],
   "status": {
-    "lastStationsSync": "2026-11-26T17:02:15.513Z",
-    "lastStationsCompleteSync": "2026-11-26T17:02:15.513Z",
-    "lastAircraftSync": "2026-11-27T08:30:29.118Z",
+    "lastStationsSync": "2026-11-27T09:02:16.212Z",
+    "lastStationsCompleteSync": "2026-11-27T09:02:16.212Z",
+    "lastAircraftSync": "2026-11-27T09:02:17.075Z",
     "lastStationsError": "",
     "lastAircraftError": "",
     "lastResult": {
