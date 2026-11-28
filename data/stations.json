@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-28T09:02:15.875Z",
+  "generatedAt": "2026-11-28T13:02:16.199Z",
   "sourceStations": [
     {
       "id": 1,
@@ -2858,9 +2858,9 @@
     }
   ],
   "status": {
-    "lastStationsSync": "2026-11-28T09:02:15.043Z",
-    "lastStationsCompleteSync": "2026-11-28T09:02:15.043Z",
-    "lastAircraftSync": "2026-11-28T09:02:15.868Z",
+    "lastStationsSync": "2026-11-28T13:02:15.278Z",
+    "lastStationsCompleteSync": "2026-11-28T13:02:15.278Z",
+    "lastAircraftSync": "2026-11-28T13:02:16.192Z",
     "lastStationsError": "",
     "lastAircraftError": "",
     "lastResult": {
