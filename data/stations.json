@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-28T08:30:18.298Z",
+  "generatedAt": "2026-11-28T09:02:15.875Z",
   "sourceStations": [
     {
       "id": 1,
@@ -168,7 +168,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-27",
+      "sightingDate": "2026-11-28",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1"
     },
     {
@@ -500,13 +500,13 @@
       "id": 39,
       "category": "RTH",
       "callsign": "Christoph 41",
-      "registration": "D-HXFD",
-      "regKey": "DHXFD",
+      "registration": "D-HXFG",
+      "regKey": "DHXFG",
       "location": "Leonberg",
       "base": "Kreiskrankenhaus Leonberg",
       "operator": "DRF Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-09-29",
+      "sightingDate": "2026-11-27",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=39&show=1"
     },
     {
@@ -1249,8 +1249,8 @@
     "DHXCK": "3e0f9a",
     "DHXFB": "3e0fdf",
     "DHXFC": "3e0fe0",
-    "DHXFD": "3e0fe1",
     "DHXFF": "3e0fe3",
+    "DHXFG": "3e0fe4",
     "DHXFH": "3e0fe5",
     "DHXFI": "3e0fe6",
     "DHXFJ": "3e0fe7",
@@ -1574,7 +1574,7 @@
       "base": "Luftrettungszentrum Bielefeld",
       "operator": "Bundesministerium des Innern",
       "helicopterType": "Airbus Helicopters EC 135",
-      "sightingDate": "2026-11-27",
+      "sightingDate": "2026-11-28",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=13&show=1",
       "assignmentSource": "rth.info",
       "icao": "3e0a3c",
@@ -2010,18 +2010,18 @@
       "id": 39,
       "category": "RTH",
       "callsign": "Christoph 41",
-      "registration": "D-HXFD",
-      "regKey": "DHXFD",
+      "registration": "D-HXFG",
+      "regKey": "DHXFG",
       "location": "Leonberg",
       "base": "Kreiskrankenhaus Leonberg",
       "operator": "DRF Luftrettung",
       "helicopterType": "Airbus Helicopters H145 (ehem. Eurocopter EC 145 T2)",
-      "sightingDate": "2026-09-29",
+      "sightingDate": "2026-11-27",
       "rthUrl": "https://www.rth.info/stationen.db/station.php?id=39&show=1",
       "assignmentSource": "rth.info",
-      "icao": "3e0fe1",
+      "icao": "3e0fe4",
       "mappingSource": "tar1090",
-      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e0fe1"
+      "adsbUrl": "https://globe.adsbexchange.com/?icao=3e0fe4"
     },
     {
       "id": 40,
@@ -2858,9 +2858,9 @@
     }
   ],
   "status": {
-    "lastStationsSync": "2026-11-27T17:02:16.701Z",
-    "lastStationsCompleteSync": "2026-11-27T17:02:16.701Z",
-    "lastAircraftSync": "2026-11-28T08:30:18.291Z",
+    "lastStationsSync": "2026-11-28T09:02:15.043Z",
+    "lastStationsCompleteSync": "2026-11-28T09:02:15.043Z",
+    "lastAircraftSync": "2026-11-28T09:02:15.868Z",
     "lastStationsError": "",
     "lastAircraftError": "",
     "lastResult": {
